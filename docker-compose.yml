@@ -18,13 +18,15 @@ services:
     depends_on:
       ollama:
         condition: service_healthy
+    environment:
+      - MODEL_NAME=${MODEL_NAME}
     command: >
       sh -lc '
       echo "Waiting for Ollama..." &&
       until curl -fsS http://ollama:11434/api/version >/dev/null; do sleep 2; done &&
-      echo "Pulling qwen2.5:7b-instruct..." &&
-      curl -fsS -X POST http://ollama:11434/api/pull -d "{\"name\":\"qwen2.5:7b-instruct\"}" &&
-      echo "Model qwen2.5:7b-instruct pulled"'
+      echo "Pulling $MODEL_NAME..." &&
+      curl -fsS -X POST http://ollama:11434/api/pull -d "{\"name\":\"$MODEL_NAME\"}" &&
+      echo "Model $MODEL_NAME pulled"'
     restart: "no"
 
   bot:
@@ -40,7 +42,7 @@ services:
     environment:
       - BOT_TOKEN=${BOT_TOKEN}
       - LLM_URL=http://ollama:11434
-      - LLM_MODEL=qwen2.5:7b-instruct
+      - LLM_MODEL=${MODEL_NAME}
       - LLM_TIMEOUT_SECONDS=${LLM_TIMEOUT_SECONDS:-60}
 
 volumes:
