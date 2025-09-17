@@ -87,7 +87,7 @@ SYSTEM_PROMPT = (
     "Эмодзий можно использовать, но не перегружать сообщение ими."
 )
 
-HISTORY_MAX_LEN = 100
+HISTORY_MAX_LEN = 40
 
 def _display_name(update_user: Optional[User]) -> str:
     if not update_user:
