@@ -1,0 +1,52 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+    environment:
+      # тюнинг под CPU
+      - OLLAMA_NUM_PARALLEL=1
+      - OLLAMA_KEEP_ALIVE=5m
+      - OLLAMA_CONTEXT_LENGTH=2048
+    healthcheck:
+      test: ["CMD-SHELL", "ollama list >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  init-model:
+    image: curlimages/curl:8.7.1
+    depends_on:
+      ollama:
+        condition: service_healthy
+    command: >
+      sh -lc '
+      echo "Waiting for Ollama..." &&
+      until curl -fsS http://ollama:11434/api/version >/dev/null; do sleep 2; done &&
+      echo "Pulling qwen2.5:7b-instruct..." &&
+      curl -fsS -X POST http://ollama:11434/api/pull -d "{\"name\":\"qwen2.5:7b-instruct\"}" &&
+      echo "Model qwen2.5:7b-instruct pulled"'
+    restart: "no"
+
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      ollama:
+        condition: service_healthy
+      init-model:
+        condition: service_completed_successfully
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - LLM_URL=http://ollama:11434
+      - LLM_MODEL=qwen2.5:7b-instruct
+      - LLM_TIMEOUT_SECONDS=${LLM_TIMEOUT_SECONDS:-60}
+
+volumes:
+  ollama:
