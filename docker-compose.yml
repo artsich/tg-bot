@@ -9,6 +9,7 @@ services:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - LLM_MODEL=${MODEL_NAME}
       - HISTORY_MAX_LEN=${HISTORY_MAX_LEN}
+      - STUPID_CHECK=${STUPID_CHECK}
 
 volumes:
   ollama:
