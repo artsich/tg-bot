@@ -146,12 +146,7 @@ def detect_stupid_msgs_from_user(llm: OpenAI, history: deque, llm_model: str, us
         input=last_msgs
     )
 
-    result = response.output_text.strip().lower() == "yes"
-
-    if result:
-        logging.info("llm detected stupid msgs")
-
-    return result
+    return response.output_text.strip().lower() == "yes"
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -244,12 +239,15 @@ async def try_check_stupid_msg(update: Update, context: ContextTypes.DEFAULT_TYP
     if random.random() > app_config.stupid_check:
         return None
 
+    logging.info("Try to detect stupidity...")
+
     if detect_stupid_msgs_from_user(
         history=_ensure_history(update, context),
         user_id=update.effective_user.id,
         llm=context.bot_data["llm_client"],
         llm_model=app_config.llm_model,
     ):
+        logging.info("Stupidity detected.")
         await update.message.reply_text("Лучше бы промолчал 🥴")
 
     return None
