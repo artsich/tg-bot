@@ -5,9 +5,10 @@ Run with Docker Compose
 1) Create a .env file next to docker-compose.yml (do not commit secrets):
 
 ```
-MODEL_NAME=qwen2.5:7b-instruct
-LLM_TIMEOUT_SECONDS=60
-BOT_TOKEN= # set your token value here locally, do not commit
+MODEL_NAME=gpt-5-nano
+HISTORY_MAX_LEN=40
+BOT_TOKEN= ...
+OPENAI_API_KEY= ...
 ```
 
 2) Build and start services:

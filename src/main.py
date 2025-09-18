@@ -1,52 +1,18 @@
 import os
 import sys
 from collections import deque
-from typing import Optional
-
-import httpx
+from typing import Optional, List
 from pydantic import BaseModel, Field, AnyUrl, ValidationError, field_validator
 from telegram import Update, User
 from telegram.constants import ChatAction, ChatType
 from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
 
-class LlmClient:
-    def __init__(
-        self,
-        base_url: str,
-        model: str,
-        system_prompt: str,
-        timeout_seconds: float = 60.0,
-    ) -> None:
-        self.base_url = base_url
-        self.model = model
-        self.system_prompt = system_prompt
-        self.timeout_seconds = timeout_seconds
-
-    async def generate(self, prompt: str) -> str:
-        payload = {
-            "model": self.model,
-            "system": self.system_prompt,
-            "prompt": prompt,
-            "stream": False,
-        }
-
-        try:
-            async with httpx.AsyncClient(timeout=self.timeout_seconds) as client:
-                resp = await client.post(self.base_url, json=payload)
-                resp.raise_for_status()
-                data = resp.json()
-                text = data.get("response") or data.get("message") or ""
-                if not text:
-                    return "Модель ничего не ответила. Попробуй сформулировать иначе."
-                return text.strip()
-        except Exception:
-            return "Ошибка запроса к LLM. Повтори попытку позже."
+from openai import OpenAI, RateLimitError
 
 class AppConfig(BaseModel):
     bot_token: str = Field(min_length=10)
-    llm_url: AnyUrl
     llm_model: str = Field(min_length=1)
-    llm_timeout_seconds: float = Field(default=60.0, gt=0)
+    history_max_len: int = Field(default=40)
 
     @field_validator("bot_token")
     @classmethod
@@ -59,35 +25,18 @@ class AppConfig(BaseModel):
 def load_config() -> AppConfig:
     env = os.environ
     bot_token = env.get("BOT_TOKEN")
-    llm_url = env.get("LLM_URL", "http://localhost:11434")
     llm_model = env.get("LLM_MODEL", "qwen2.5:7b-instruct")
 
-    try:
-        timeout_raw: Optional[str] = env.get("LLM_TIMEOUT_SECONDS")
-        timeout = float(timeout_raw) if timeout_raw else 60.0
-    except Exception:
-        timeout = 60.0
 
     try:
         return AppConfig(
             bot_token=bot_token,
-            llm_url=llm_url,
             llm_model=llm_model,
-            llm_timeout_seconds=timeout,
+            history_max_len=int(env.get("HISTORY_MAX_LEN", 40)),
         )
     except ValidationError as e:
         sys.stderr.write(f"Invalid configuration: {e}\n")
         sys.exit(1)
-
-
-SYSTEM_PROMPT = (
-    "Отвечай на том языке, на котором тебя спросили."
-    "Отвечай только результатом, без лишнего текста. "
-    "Будь токсичным как можно больше, но и на вопрос отвечай."
-    "Эмодзий можно использовать, но не перегружать сообщение ими."
-)
-
-HISTORY_MAX_LEN = 40
 
 def _display_name(update_user: Optional[User]) -> str:
     if not update_user:
@@ -138,10 +87,12 @@ def _ensure_history(update: Update, context: ContextTypes.DEFAULT_TYPE) -> deque
     chat = update.effective_chat
     user = update.effective_user
 
+    app_config: AppConfig = context.bot_data["app_config"]
+
     if chat and chat.type == ChatType.PRIVATE:
         history = context.user_data.get("history")
         if not isinstance(history, deque):
-            history = deque(maxlen=HISTORY_MAX_LEN)
+            history = deque(maxlen=app_config.history_max_len)
             context.user_data["history"] = history
         return history
 
@@ -149,34 +100,26 @@ def _ensure_history(update: Update, context: ContextTypes.DEFAULT_TYPE) -> deque
     user_id = user.id if user else 0
     history = store.get(user_id)
     if not isinstance(history, deque):
-        history = deque(maxlen=HISTORY_MAX_LEN)
+        history = deque(maxlen=app_config.history_max_len)
         store[user_id] = history
     return history
 
 
-def _build_prompt(history: deque, user_text: str, sender: Optional[User]) -> str:
-    parts = []
+def _build_prompt(history: deque) -> list[dict[str, str]]:
+    messages = []
     for item in history:
         role = item.get("role")
         text = (item.get("text") or "").strip()
         if not text:
             continue
-        if role == "assistant":
-            prefix = "assistant"
-        else:
-            label = item.get("display_name") or item.get("user_id")
-            if label:
-                prefix = f"user({label})"
-            else:
-                prefix = "user"
-        parts.append(f"{prefix}: {text}")
 
-    label = _display_name(sender)
-    if label:
-        parts.append(f"user({label}): {user_text}")
-    else:
-        parts.append(f"user: {user_text}")
-    return "\n\n".join(parts)
+        if role == "assistant":
+            messages.append({"role": "assistant", "content": text})
+        else:
+            label = item.get("display_name") or item.get("user_id") or "user"
+            messages.append({"role": "user", "content": f"{label}: {text}"})
+
+    return messages
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -198,17 +141,39 @@ async def ask_ai(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     )
 
     history = _ensure_history(update, context)
-    prompt = _build_prompt(history, user_text, update.effective_user)
-
-    llm: LlmClient = context.bot_data["llm_client"]
-    answer = await llm.generate(prompt)
-
     _append_history_entry(
         history,
         role="user",
         text=user_text,
         user=update.effective_user,
     )
+
+    input_history = _build_prompt(history)
+
+    llm: OpenAI = context.bot_data["llm_client"]
+    app_config: AppConfig = context.bot_data["app_config"]
+
+    try:
+        response = llm.responses.create(
+            model=app_config.llm_model,
+            input = input_history,
+            instructions="""
+    Отвечай на том языке, на котором тебя спросили.
+    Ты должен вести себя как человек уставший от жизни, которому задают идиотские вопросы.
+    Отвечай только результатом, без лишнего текста. 
+    Будь токсичным, устраивай прожарку, но в контексте вопроса.
+    Можно использовать матюки.
+    Эмодзий можно использовать, но не перегружать сообщение ими. (максимум 4 штуки)
+    """)
+        answer = response.output_text
+    except RateLimitError:
+        await update.message.reply_text('❌💸 Kurwa, a деняг то больше нiма...')
+        return
+    except Exception as e:
+        print("OpenAI error:", e, file=sys.stderr)
+        await update.message.reply_text('Бляяяяяя, чет проблема какая с openai :(')
+        return
+
     _append_history_entry(
         history,
         role="assistant",
@@ -240,21 +205,13 @@ async def store_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE)
         user=sender,
     )
 
-
 def main() -> None:
     cfg = load_config()
 
     app = Application.builder().token(cfg.bot_token).build()
 
-    base = str(cfg.llm_url).rstrip("/")
-    endpoint = f"{base}/api/generate"
-
-    app.bot_data["llm_client"] = LlmClient(
-        base_url=endpoint,
-        model=cfg.llm_model,
-        system_prompt=SYSTEM_PROMPT,
-        timeout_seconds=cfg.llm_timeout_seconds,
-    )
+    app.bot_data["llm_client"] = OpenAI()
+    app.bot_data["app_config"] = cfg
 
     app.add_handler(CommandHandler("help", help_command))
     app.add_handler(CommandHandler("ai", ask_ai))
@@ -263,7 +220,6 @@ def main() -> None:
     print("Bot is running...")
     app.run_polling(close_loop=False)
     print("Bot is stopped...")
-
 
 if __name__ == "__main__":
     main()

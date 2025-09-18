@@ -1,49 +1,14 @@
 services:
-  ollama:
-    image: ollama/ollama:latest
-    container_name: ollama
-    restart: unless-stopped
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama:/root/.ollama
-    healthcheck:
-      test: ["CMD-SHELL", "ollama list >/dev/null 2>&1"]
-      interval: 10s
-      timeout: 5s
-      retries: 12
-
-  init-model:
-    image: curlimages/curl:8.7.1
-    depends_on:
-      ollama:
-        condition: service_healthy
-    environment:
-      - MODEL_NAME=${MODEL_NAME}
-    command: >
-      sh -lc '
-      echo "Waiting for Ollama..." &&
-      until curl -fsS http://ollama:11434/api/version >/dev/null; do sleep 2; done &&
-      echo "Pulling $MODEL_NAME..." &&
-      curl -fsS -X POST http://ollama:11434/api/pull -d "{\"name\":\"$MODEL_NAME\"}" &&
-      echo "Model $MODEL_NAME pulled"'
-    restart: "no"
-
   bot:
     build:
       context: .
       dockerfile: Dockerfile
     restart: unless-stopped
-    depends_on:
-      ollama:
-        condition: service_healthy
-      init-model:
-        condition: service_completed_successfully
     environment:
       - BOT_TOKEN=${BOT_TOKEN}
-      - LLM_URL=http://ollama:11434
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
       - LLM_MODEL=${MODEL_NAME}
-      - LLM_TIMEOUT_SECONDS=${LLM_TIMEOUT_SECONDS:-60}
+      - HISTORY_MAX_LEN=${HISTORY_MAX_LEN}
 
 volumes:
   ollama:
