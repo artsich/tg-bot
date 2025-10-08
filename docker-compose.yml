@@ -10,6 +10,7 @@ services:
       - LLM_MODEL=${MODEL_NAME}
       - HISTORY_MAX_LEN=${HISTORY_MAX_LEN}
       - STUPID_CHECK=${STUPID_CHECK}
+      - DATA_DIR=/app/data
+    volumes:
+      - ./data:/app/data
 
-volumes:
-  ollama:
