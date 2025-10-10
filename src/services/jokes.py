@@ -1,10 +1,10 @@
 from pathlib import Path
-import csv
+import json
 import os
 import threading
 
 data_dir = Path(os.getenv("DATA_DIR") or "data")
-file_path = data_dir / "joke_subs.csv"
+file_path = data_dir / "joke_subs.json"
 
 
 _lock = threading.Lock()
@@ -49,29 +49,29 @@ def get_subs() -> list[JokeSub]:
 def _save_to_file(records: list[JokeSub]) -> None:
     # Ensure parent directory exists
     file_path.parent.mkdir(parents=True, exist_ok=True)
-    with file_path.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.writer(f)
-        writer.writerow(["chat_id", "topic"])
-        for r in records:
-            writer.writerow([int(r.chat_id), r.topic])
+    data = [{"chat_id": int(r.chat_id), "topic": r.topic} for r in records]
+    with file_path.open("w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
 
 
 def _load_from_file() -> list[JokeSub]:
     if not file_path.exists():
         return []
+    try:
+        with file_path.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception:
+        return []
+
     records: list[JokeSub] = []
-    with file_path.open("r", encoding="utf-8", newline="") as f:
-        reader = csv.reader(f)
-        for idx, row in enumerate(reader):
-            if not row:
-                continue
-            # Skip header if present (expecting first cell to be exactly 'chat_id')
-            if idx == 0 and len(row) >= 1 and str(row[0]).strip().lower() == "chat_id":
-                continue
-            try:
-                cid = int(str(row[0]).strip())
-                topic = (row[1] if len(row) > 1 else "").strip()
-                records.append(JokeSub(chat_id=cid, topic=topic))
-            except Exception:
-                continue
+    if not isinstance(data, list):
+        return records
+
+    for item in data:
+        try:
+            cid = int((item.get("chat_id")))
+            topic = (item.get("topic") or "").strip()
+            records.append(JokeSub(chat_id=cid, topic=topic))
+        except Exception:
+            continue
     return records
