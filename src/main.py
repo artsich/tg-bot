@@ -10,6 +10,7 @@ from src.handlers.help import help_command
 from src.handlers.jokes import sub_joke, unjoke, send_daily_jokes
 from src.handlers.store_msg import store_text_message
 from src.handlers.stupid_msg import try_check_stupid_msg
+from src.handlers.settings import stupidity_on, stupidity_off
 
 
 def main() -> None:
@@ -28,6 +29,8 @@ def main() -> None:
 
     app.add_handler(CommandHandler("help", help_command))
     app.add_handler(CommandHandler("ai", ask_ai))
+    app.add_handler(CommandHandler("stupidity_on", stupidity_on))
+    app.add_handler(CommandHandler("stupidity_off", stupidity_off))
 
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, store_text_message), group=0)
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, try_check_stupid_msg), group=1)

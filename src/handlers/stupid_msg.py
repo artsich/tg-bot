@@ -5,6 +5,7 @@ from telegram.ext import ContextTypes
 
 from src.config import AppConfig
 from src.history import ensure_history, get_last_user_messages, build_prompt
+from src.services.settings import get_chat_settings
 
 from collections import deque
 from openai import OpenAI
@@ -35,6 +36,10 @@ def _detect_stupid_msgs_from_user(llm: OpenAI, history: deque, llm_model: str, u
 
 async def try_check_stupid_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     app_config: AppConfig = context.bot_data["app_config"]
+
+    chat_settings = get_chat_settings(update.effective_chat.id)
+    if not chat_settings.stupidity_check:
+        return None
 
     if random.random() > app_config.stupid_check:
         return None
