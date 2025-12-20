@@ -1,9 +1,11 @@
-import { ThemeProvider, createTheme } from '@mui/material/styles'
-import CssBaseline from '@mui/material/CssBaseline'
-import Container from '@mui/material/Container'
-import Typography from '@mui/material/Typography'
-import Box from '@mui/material/Box'
-import Paper from '@mui/material/Paper'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import Layout from './components/Layout';
+import Dashboard from './pages/Dashboard';
+import GlobalSettings from './pages/GlobalSettings';
+import ChatsList from './pages/ChatsList';
+import ChatSettings from './pages/ChatSettings';
 
 const theme = createTheme({
   palette: {
@@ -15,29 +17,24 @@ const theme = createTheme({
       main: '#dc004e',
     },
   },
-})
+});
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Container maxWidth="lg">
-        <Box sx={{ my: 4 }}>
-          <Paper elevation={3} sx={{ p: 4 }}>
-            <Typography variant="h3" component="h1" gutterBottom>
-              TgBot Admin Portal
-            </Typography>
-            <Typography variant="h5" component="h2" gutterBottom>
-              Админ-панель для управления ботом
-            </Typography>
-            <Typography variant="body1" sx={{ mt: 2 }}>
-              Добро пожаловать в админ-панель. Здесь вы сможете управлять настройками бота.
-            </Typography>
-          </Paper>
-        </Box>
-      </Container>
+      <BrowserRouter>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/global" element={<GlobalSettings />} />
+            <Route path="/chats" element={<ChatsList />} />
+            <Route path="/chats/:chatId" element={<ChatSettings />} />
+          </Routes>
+        </Layout>
+      </BrowserRouter>
     </ThemeProvider>
-  )
+  );
 }
 
-export default App
+export default App;
