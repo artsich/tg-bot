@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Paper,
@@ -23,6 +24,7 @@ interface ChatSettingsData {
 }
 
 export default function ChatSettings() {
+  const { t } = useTranslation();
   const { chatId } = useParams<{ chatId: string }>();
   const navigate = useNavigate();
   const [settings, setSettings] = useState<ChatSettingsData | null>(null);
@@ -49,10 +51,10 @@ export default function ChatSettings() {
       if (response.success) {
         setSettings(response.data);
       } else {
-        setError('Не удалось загрузить настройки чата');
+        setError(t('chats.settings.loadError'));
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ошибка загрузки настроек');
+      setError(err instanceof Error ? err.message : t('chats.settings.loadError'));
     } finally {
       setLoading(false);
     }
@@ -82,10 +84,10 @@ export default function ChatSettings() {
         setSuccess(true);
         setTimeout(() => setSuccess(false), 3000);
       } else {
-        setError('Не удалось сохранить настройки');
+        setError(t('chats.settings.saveError'));
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ошибка сохранения настроек');
+      setError(err instanceof Error ? err.message : t('chats.settings.saveError'));
     } finally {
       setSaving(false);
     }
@@ -108,7 +110,7 @@ export default function ChatSettings() {
 
   if (!chatIdNum) {
     return (
-      <Alert severity="error">Неверный ID чата</Alert>
+      <Alert severity="error">{t('chats.settings.invalidChatId')}</Alert>
     );
   }
 
@@ -122,7 +124,7 @@ export default function ChatSettings() {
 
   if (!settings) {
     return (
-      <Alert severity="error">Не удалось загрузить настройки чата</Alert>
+      <Alert severity="error">{t('chats.settings.loadError')}</Alert>
     );
   }
 
@@ -130,10 +132,10 @@ export default function ChatSettings() {
     <Box>
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
         <Button onClick={() => navigate('/chats')} sx={{ mr: 2 }}>
-          ← Назад к списку
+          ← {t('common.back')}
         </Button>
         <Typography variant="h4" component="h1">
-          Настройки чата {chatIdNum}
+          {t('chats.settings.title', { chatId: chatIdNum })}
         </Typography>
       </Box>
 
@@ -143,29 +145,29 @@ export default function ChatSettings() {
         </Alert>
       )}
 
-      {success && (
-        <Alert severity="success" sx={{ mb: 2 }}>
-          Настройки успешно сохранены!
-        </Alert>
-      )}
+        {success && (
+          <Alert severity="success" sx={{ mb: 2 }}>
+            {t('chats.settings.saveSuccess')}
+          </Alert>
+        )}
 
       <Paper sx={{ p: 3, mb: 3 }}>
         <Typography variant="h6" gutterBottom>
-          Информация о чате
+          {t('chats.settings.info.title')}
         </Typography>
         <TextField
           fullWidth
-          label="Chat ID"
+          label={t('chats.settings.info.chatId')}
           value={settings.chat_id}
           margin="normal"
           InputProps={{ readOnly: true }}
-          helperText="Идентификатор чата (нельзя изменить)"
+          helperText={t('chats.settings.info.chatIdHelper')}
         />
       </Paper>
 
       <Paper sx={{ p: 3, mb: 3 }}>
         <Typography variant="h6" gutterBottom>
-          Проверка тупости
+          {t('chats.settings.stupidity.title')}
         </Typography>
         <FormControlLabel
           control={
@@ -174,16 +176,16 @@ export default function ChatSettings() {
               onChange={(e) => handleChange('stupidity_check', e.target.checked)}
             />
           }
-          label="Включить проверку тупости сообщений в этом чате"
+          label={t('chats.settings.stupidity.enabled')}
         />
         <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-          Когда включено, бот будет проверять сообщения пользователей на тупость с заданной вероятностью
+          {t('chats.settings.stupidity.helper')}
         </Typography>
       </Paper>
 
       <Paper sx={{ p: 3, mb: 3 }}>
         <Typography variant="h6" gutterBottom>
-          Подписка на ежедневные шутки
+          {t('chats.settings.jokes.title')}
         </Typography>
         <FormControlLabel
           control={
@@ -192,7 +194,7 @@ export default function ChatSettings() {
               onChange={(e) => handleJokeSubscriptionChange(e.target.checked)}
             />
           }
-          label="Подписать чат на ежедневные шутки"
+          label={t('chats.settings.jokes.subscribe')}
         />
         
         {settings.joke_subscription && (
@@ -200,7 +202,7 @@ export default function ChatSettings() {
             <Divider sx={{ my: 2 }} />
             <TextField
               fullWidth
-              label="Тема шуток"
+              label={t('chats.settings.jokes.topic')}
               value={settings.joke_subscription.topic}
               onChange={(e) =>
                 handleChange('joke_subscription', {
@@ -208,8 +210,8 @@ export default function ChatSettings() {
                 })
               }
               margin="normal"
-              helperText="Тема для генерации шуток (необязательно). Если не указана, тема выбирается случайно."
-              placeholder="Например: Программирование, Жизнь, Анекдоты"
+              helperText={t('chats.settings.jokes.topicHelper')}
+              placeholder={t('chats.settings.jokes.topicPlaceholder')}
             />
           </>
         )}
@@ -217,7 +219,7 @@ export default function ChatSettings() {
 
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
         <Button variant="outlined" onClick={() => navigate('/chats')} disabled={saving}>
-          Отмена
+          {t('common.cancel')}
         </Button>
         <Button
           variant="contained"
@@ -225,7 +227,7 @@ export default function ChatSettings() {
           disabled={saving}
           startIcon={saving ? <CircularProgress size={20} /> : null}
         >
-          {saving ? 'Сохранение...' : 'Сохранить'}
+          {saving ? t('common.saving') : t('common.save')}
         </Button>
       </Box>
     </Box>

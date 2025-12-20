@@ -1,15 +1,18 @@
+import { useTranslation } from 'react-i18next';
 import { Box, Paper, Typography, Grid, Card, CardContent } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ChatIcon from '@mui/icons-material/Chat';
 
 export default function Dashboard() {
+  const { t } = useTranslation();
+
   return (
     <Box>
       <Typography variant="h4" component="h1" gutterBottom>
-        Панель управления
+        {t('dashboard.title')}
       </Typography>
       <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-        Добро пожаловать в админ-панель TgBot. Здесь вы можете управлять настройками бота.
+        {t('dashboard.welcome')}
       </Typography>
 
       <Grid container spacing={3}>
@@ -18,10 +21,10 @@ export default function Dashboard() {
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <SettingsIcon sx={{ mr: 2, fontSize: 40, color: 'primary.main' }} />
-                <Typography variant="h5">Глобальные настройки</Typography>
+                <Typography variant="h5">{t('dashboard.globalSettingsCard.title')}</Typography>
               </Box>
               <Typography variant="body2" color="text.secondary">
-                Настройте параметры работы бота: модель LLM, длина истории, промпты и расписание.
+                {t('dashboard.globalSettingsCard.description')}
               </Typography>
             </CardContent>
           </Card>
@@ -32,10 +35,10 @@ export default function Dashboard() {
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <ChatIcon sx={{ mr: 2, fontSize: 40, color: 'primary.main' }} />
-                <Typography variant="h5">Настройки чатов</Typography>
+                <Typography variant="h5">{t('dashboard.chatSettingsCard.title')}</Typography>
               </Box>
               <Typography variant="body2" color="text.secondary">
-                Управляйте настройками для каждого чата: проверка тупости, подписки на шутки.
+                {t('dashboard.chatSettingsCard.description')}
               </Typography>
             </CardContent>
           </Card>
@@ -44,11 +47,10 @@ export default function Dashboard() {
 
       <Paper sx={{ mt: 4, p: 3 }}>
         <Typography variant="h6" gutterBottom>
-          Информация
+          {t('dashboard.info.title')}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          В данный момент используется моковый API. Когда бэкенд будет готов, переключение на реальный API
-          произойдёт автоматически через конфигурацию.
+          {t('dashboard.info.mockApi')}
         </Typography>
       </Paper>
     </Box>

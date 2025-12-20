@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Paper,
@@ -15,6 +16,7 @@ import { api } from '../api/client';
 import type { GlobalSettings } from '../types';
 
 export default function GlobalSettings() {
+  const { t } = useTranslation();
   const [settings, setSettings] = useState<GlobalSettings | null>(null);
   const [originalSettings, setOriginalSettings] = useState<GlobalSettings | null>(null);
   const [loading, setLoading] = useState(true);
@@ -36,10 +38,10 @@ export default function GlobalSettings() {
         setSettings(data);
         setOriginalSettings(JSON.parse(JSON.stringify(data))); // Deep copy
       } else {
-        setError('Не удалось загрузить настройки');
+        setError(t('globalSettings.loadError'));
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ошибка загрузки настроек');
+      setError(err instanceof Error ? err.message : t('globalSettings.loadError'));
     } finally {
       setLoading(false);
     }
@@ -64,10 +66,10 @@ export default function GlobalSettings() {
         setOriginalSettings(JSON.parse(JSON.stringify(settings))); // Обновляем оригинал
         setTimeout(() => setSuccess(false), 3000);
       } else {
-        setError('Не удалось сохранить настройки');
+        setError(t('globalSettings.saveError'));
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ошибка сохранения настроек');
+      setError(err instanceof Error ? err.message : t('globalSettings.saveError'));
     } finally {
       setSaving(false);
     }
@@ -96,7 +98,7 @@ export default function GlobalSettings() {
 
   if (!settings) {
     return (
-      <Alert severity="error">Не удалось загрузить настройки</Alert>
+      <Alert severity="error">{t('globalSettings.loadError')}</Alert>
     );
   }
 
@@ -115,7 +117,7 @@ export default function GlobalSettings() {
       >
         <Toolbar sx={{ justifyContent: 'space-between', px: 2, minHeight: '64px !important' }}>
           <Typography variant="h5" component="h1" sx={{ fontWeight: 500 }}>
-            Глобальные настройки
+            {t('globalSettings.title')}
           </Typography>
           <Box sx={{ display: 'flex', gap: 2 }}>
             {hasChanges && (
@@ -124,7 +126,7 @@ export default function GlobalSettings() {
                 onClick={handleCancel}
                 disabled={saving || loading}
               >
-                Отмена
+                {t('common.cancel')}
               </Button>
             )}
             <Button
@@ -133,7 +135,7 @@ export default function GlobalSettings() {
               disabled={saving || loading || !hasChanges}
               startIcon={saving ? <CircularProgress size={20} color="inherit" /> : null}
             >
-              {saving ? 'Сохранение...' : 'Сохранить'}
+              {saving ? t('common.saving') : t('common.save')}
             </Button>
           </Box>
         </Toolbar>
@@ -148,47 +150,47 @@ export default function GlobalSettings() {
 
         {success && (
           <Alert severity="success" sx={{ mb: 2 }}>
-            Настройки успешно сохранены!
+            {t('globalSettings.saveSuccess')}
           </Alert>
         )}
 
       <Paper sx={{ p: 3, mb: 3 }}>
         <Typography variant="h6" gutterBottom>
-          Настройки LLM
+          {t('globalSettings.llm.title')}
         </Typography>
         <TextField
           fullWidth
-          label="Модель LLM"
+          label={t('globalSettings.llm.model')}
           value={settings.llm_model}
           onChange={(e) => handleChange('llm_model', e.target.value)}
           margin="normal"
-          helperText="Название модели для использования в LLM запросах"
+          helperText={t('globalSettings.llm.modelHelper')}
         />
       </Paper>
 
       <Paper sx={{ p: 3, mb: 3 }}>
         <Typography variant="h6" gutterBottom>
-          Настройки истории
+          {t('globalSettings.history.title')}
         </Typography>
         <TextField
           fullWidth
           type="number"
-          label="Максимальная длина истории"
+          label={t('globalSettings.history.maxLength')}
           value={settings.history_max_len}
           onChange={(e) => handleChange('history_max_len', parseInt(e.target.value) || 0)}
           margin="normal"
           inputProps={{ min: 1, max: 1000 }}
-          helperText="Максимальное количество сообщений в истории (1-1000)"
+          helperText={t('globalSettings.history.maxLengthHelper')}
         />
       </Paper>
 
       <Paper sx={{ p: 3, mb: 3 }}>
         <Typography variant="h6" gutterBottom>
-          Настройки проверки тупости
+          {t('globalSettings.stupidity.title')}
         </Typography>
         <Box sx={{ px: 2, py: 1 }}>
           <Typography gutterBottom>
-            Вероятность проверки тупости: {settings.stupid_check.toFixed(2)}
+            {t('globalSettings.stupidity.probabilityValue', { value: settings.stupid_check.toFixed(2) })}
           </Typography>
           <Slider
             value={settings.stupid_check}
@@ -203,41 +205,41 @@ export default function GlobalSettings() {
             ]}
           />
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-            Вероятность того, что бот проверит сообщение на тупость (0.0 - никогда, 1.0 - всегда)
+            {t('globalSettings.stupidity.probabilityHelper')}
           </Typography>
         </Box>
       </Paper>
 
       <Paper sx={{ p: 3, mb: 3 }}>
         <Typography variant="h6" gutterBottom>
-          Расписание ежедневных шуток
+          {t('globalSettings.jokes.title')}
         </Typography>
         <TextField
           fullWidth
           type="time"
-          label="Время отправки"
+          label={t('globalSettings.jokes.time')}
           value={settings.daily_jokes_time}
           onChange={(e) => handleChange('daily_jokes_time', e.target.value)}
           margin="normal"
           InputLabelProps={{ shrink: true }}
-          helperText="Время отправки ежедневных шуток (формат: HH:MM)"
+          helperText={t('globalSettings.jokes.timeHelper')}
         />
       </Paper>
 
       <Paper sx={{ p: 3, mb: 3 }}>
         <Typography variant="h6" gutterBottom>
-          Промпты для LLM
+          {t('globalSettings.prompts.title')}
         </Typography>
         
         <TextField
           fullWidth
           multiline
           rows={8}
-          label="Промпт для AI команды"
+          label={t('globalSettings.prompts.ai.label')}
           value={settings.ai_instructions}
           onChange={(e) => handleChange('ai_instructions', e.target.value)}
           margin="normal"
-          helperText="Инструкции для бота при обработке команды /ai"
+          helperText={t('globalSettings.prompts.ai.helper')}
         />
 
         <Divider sx={{ my: 3 }} />
@@ -246,11 +248,11 @@ export default function GlobalSettings() {
           fullWidth
           multiline
           rows={5}
-          label="Промпт для проверки тупости"
+          label={t('globalSettings.prompts.stupidity.label')}
           value={settings.stupidity_instructions}
           onChange={(e) => handleChange('stupidity_instructions', e.target.value)}
           margin="normal"
-          helperText="Инструкции для модератора при проверке сообщений на тупость"
+          helperText={t('globalSettings.prompts.stupidity.helper')}
         />
 
         <Divider sx={{ my: 3 }} />
@@ -259,11 +261,11 @@ export default function GlobalSettings() {
           fullWidth
           multiline
           rows={5}
-          label="Промпт для генерации шуток"
+          label={t('globalSettings.prompts.joke.label')}
           value={settings.joke_instructions}
           onChange={(e) => handleChange('joke_instructions', e.target.value)}
           margin="normal"
-          helperText="Инструкции для генератора шуток"
+          helperText={t('globalSettings.prompts.joke.helper')}
         />
       </Paper>
       </Box>

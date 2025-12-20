@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Paper,
@@ -20,21 +21,16 @@ import EditIcon from '@mui/icons-material/Edit';
 import { api } from '../api/client';
 import type { ChatInfo } from '../types';
 
-const getChatTypeLabel = (type?: string): string => {
-  const labels: Record<string, string> = {
-    private: 'Личный',
-    group: 'Группа',
-    supergroup: 'Супергруппа',
-    channel: 'Канал',
-  };
-  return labels[type || 'unknown'] || 'Неизвестно';
-};
-
 export default function ChatsList() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [chats, setChats] = useState<ChatInfo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const getChatTypeLabel = (type?: string): string => {
+    return t(`chats.list.types.${type || 'unknown'}`);
+  };
 
   useEffect(() => {
     loadChats();
@@ -48,10 +44,10 @@ export default function ChatsList() {
       if (response.success) {
         setChats(response.data);
       } else {
-        setError('Не удалось загрузить список чатов');
+        setError(t('chats.list.loadError'));
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ошибка загрузки чатов');
+      setError(err instanceof Error ? err.message : t('chats.list.loadError'));
     } finally {
       setLoading(false);
     }
@@ -78,17 +74,17 @@ export default function ChatsList() {
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" component="h1">
-          Настройки чатов
+          {t('chats.list.title')}
         </Typography>
         <Button variant="outlined" onClick={loadChats}>
-          Обновить
+          {t('common.refresh')}
         </Button>
       </Box>
 
       {chats.length === 0 ? (
         <Paper sx={{ p: 3 }}>
           <Typography color="text.secondary">
-            Чаты не найдены. Чаты появятся здесь после первого взаимодействия с ботом.
+            {t('chats.list.empty')}
           </Typography>
         </Paper>
       ) : (
@@ -96,12 +92,12 @@ export default function ChatsList() {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Chat ID</TableCell>
-                <TableCell>Тип чата</TableCell>
-                <TableCell align="center">Проверка тупости</TableCell>
-                <TableCell align="center">Подписка на шутки</TableCell>
-                <TableCell>Тема шуток</TableCell>
-                <TableCell align="right">Действия</TableCell>
+                <TableCell>{t('chats.list.columns.chatId')}</TableCell>
+                <TableCell>{t('chats.list.columns.chatType')}</TableCell>
+                <TableCell align="center">{t('chats.list.columns.stupidityCheck')}</TableCell>
+                <TableCell align="center">{t('chats.list.columns.jokeSubscription')}</TableCell>
+                <TableCell>{t('chats.list.columns.jokeTopic')}</TableCell>
+                <TableCell align="right">{t('chats.list.columns.actions')}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -111,14 +107,14 @@ export default function ChatsList() {
                   <TableCell>{getChatTypeLabel(chat.chat_type)}</TableCell>
                   <TableCell align="center">
                     <Chip
-                      label={chat.stupidity_check ? 'Включена' : 'Выключена'}
+                      label={chat.stupidity_check ? t('chats.list.status.enabled') : t('chats.list.status.disabled')}
                       color={chat.stupidity_check ? 'success' : 'default'}
                       size="small"
                     />
                   </TableCell>
                   <TableCell align="center">
                     <Chip
-                      label={chat.joke_subscription ? 'Подписан' : 'Не подписан'}
+                      label={chat.joke_subscription ? t('chats.list.status.subscribed') : t('chats.list.status.notSubscribed')}
                       color={chat.joke_subscription ? 'primary' : 'default'}
                       size="small"
                     />

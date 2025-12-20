@@ -1,0 +1,131 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "saving": "Saving...",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "close": "Close",
+    "edit": "Edit",
+    "delete": "Delete",
+    "back": "Back",
+    "refresh": "Refresh"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "globalSettings": "Global Settings",
+    "chatSettings": "Chat Settings"
+  },
+  "dashboard": {
+    "title": "Control Panel",
+    "welcome": "Welcome to TgBot admin panel. Here you can manage bot settings.",
+    "globalSettingsCard": {
+      "title": "Global Settings",
+      "description": "Configure bot parameters: LLM model, history length, prompts and schedule."
+    },
+    "chatSettingsCard": {
+      "title": "Chat Settings",
+      "description": "Manage settings for each chat: stupidity check, joke subscriptions."
+    },
+    "info": {
+      "title": "Information",
+      "mockApi": "Currently using mock API. When backend is ready, switching to real API will happen automatically through configuration."
+    }
+  },
+  "globalSettings": {
+    "title": "Global Settings",
+    "llm": {
+      "title": "LLM Settings",
+      "model": "LLM Model",
+      "modelHelper": "Model name for use in LLM requests"
+    },
+    "history": {
+      "title": "History Settings",
+      "maxLength": "Maximum History Length",
+      "maxLengthHelper": "Maximum number of messages in history (1-1000)"
+    },
+    "stupidity": {
+      "title": "Stupidity Check Settings",
+      "probability": "Stupidity Check Probability",
+      "probabilityValue": "Stupidity Check Probability: {{value}}",
+      "probabilityHelper": "Probability that bot will check message for stupidity (0.0 - never, 1.0 - always)"
+    },
+    "jokes": {
+      "title": "Daily Jokes Schedule",
+      "time": "Send Time",
+      "timeHelper": "Time to send daily jokes (format: HH:MM)"
+    },
+    "prompts": {
+      "title": "LLM Prompts",
+      "ai": {
+        "label": "Prompt for AI Command",
+        "helper": "Instructions for bot when processing /ai command"
+      },
+      "stupidity": {
+        "label": "Prompt for Stupidity Check",
+        "helper": "Instructions for moderator when checking messages for stupidity"
+      },
+      "joke": {
+        "label": "Prompt for Joke Generation",
+        "helper": "Instructions for joke generator"
+      }
+    },
+    "saveSuccess": "Settings successfully saved!",
+    "loadError": "Failed to load settings",
+    "saveError": "Failed to save settings"
+  },
+  "chats": {
+    "title": "Chat Settings",
+    "list": {
+      "title": "Chat Settings",
+      "empty": "No chats found. Chats will appear here after first interaction with bot.",
+      "loadError": "Failed to load chats list",
+      "columns": {
+        "chatId": "Chat ID",
+        "chatType": "Chat Type",
+        "stupidityCheck": "Stupidity Check",
+        "jokeSubscription": "Joke Subscription",
+        "jokeTopic": "Joke Topic",
+        "actions": "Actions"
+      },
+      "types": {
+        "private": "Private",
+        "group": "Group",
+        "supergroup": "Supergroup",
+        "channel": "Channel",
+        "unknown": "Unknown"
+      },
+      "status": {
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "subscribed": "Subscribed",
+        "notSubscribed": "Not Subscribed"
+      }
+    },
+    "settings": {
+      "title": "Chat Settings {{chatId}}",
+      "info": {
+        "title": "Chat Information",
+        "chatId": "Chat ID",
+        "chatIdHelper": "Chat identifier (cannot be changed)"
+      },
+      "stupidity": {
+        "title": "Stupidity Check",
+        "enabled": "Enable stupidity check for messages in this chat",
+        "helper": "When enabled, bot will check user messages for stupidity with specified probability"
+      },
+      "jokes": {
+        "title": "Daily Jokes Subscription",
+        "subscribe": "Subscribe chat to daily jokes",
+        "topic": "Joke Topic",
+        "topicHelper": "Topic for joke generation (optional). If not specified, topic is chosen randomly.",
+        "topicPlaceholder": "For example: Programming, Life, Jokes"
+      },
+      "saveSuccess": "Chat settings successfully saved!",
+      "loadError": "Failed to load chat settings",
+      "saveError": "Failed to save chat settings",
+      "invalidChatId": "Invalid chat ID"
+    }
+  }
+}
