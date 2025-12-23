@@ -1,5 +1,6 @@
-import { useState, useEffect, useMemo } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Controller, useForm } from "react-hook-form";
 import {
   Box,
   Paper,
@@ -17,79 +18,104 @@ import type { GlobalSettings } from "../types";
 
 export default function GlobalSettings() {
   const { t } = useTranslation();
-  const [settings, setSettings] = useState<GlobalSettings | null>(null);
-  const [originalSettings, setOriginalSettings] =
-    useState<GlobalSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [originalSettings, setOriginalSettings] =
+    useState<GlobalSettings | null>(null);
 
-  useEffect(() => {
-    loadSettings();
-  }, []);
+  const successTimerRef = useRef<number | null>(null);
 
-  const loadSettings = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await api.getGlobalSettings();
-      if (response.success) {
-        const data = response.data;
-        setSettings(data);
-        setOriginalSettings({ ...data }); // Deep copy
-      } else {
-        setError(t("globalSettings.loadError"));
-      }
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : t("globalSettings.loadError")
-      );
-    } finally {
-      setLoading(false);
+  const clearSuccessTimer = () => {
+    if (successTimerRef.current != null) {
+      window.clearTimeout(successTimerRef.current);
+      successTimerRef.current = null;
     }
   };
 
-  const hasChanges = useMemo(() => {
-    if (!settings || !originalSettings) return false;
-    return JSON.stringify(settings) !== JSON.stringify(originalSettings);
-  }, [settings, originalSettings]);
+  const {
+    control,
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { isDirty },
+  } = useForm<GlobalSettings>({
+    defaultValues: {
+      llmModel: "",
+      historyMaxLen: 0,
+      stupidCheck: 0,
+      dailyJokesTime: "00:00",
+      aiInstructions: "",
+      stupidityInstructions: "",
+      jokeInstructions: "",
+    },
+    mode: "onChange",
+  });
 
-  const handleSave = async () => {
-    if (!settings) return;
+  const stupidCheckValue = watch("stupidCheck");
 
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await api.getGlobalSettings();
+        if (response.success) {
+          setOriginalSettings(response.data);
+          reset(response.data);
+        } else {
+          setError(t("globalSettings.loadError"));
+        }
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : t("globalSettings.loadError")
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
+  }, [reset, t]);
+
+  useEffect(() => {
+    return () => clearSuccessTimer();
+  }, []);
+
+  const onSave = handleSubmit(async (values) => {
     try {
       setSaving(true);
       setError(null);
       setSuccess(false);
-      const response = await api.updateGlobalSettings(settings);
+      clearSuccessTimer();
+
+      const response = await api.updateGlobalSettings(values);
       if (response.success) {
         setSuccess(true);
-        setOriginalSettings(JSON.parse(JSON.stringify(settings))); // Обновляем оригинал
-        setTimeout(() => setSuccess(false), 3000);
+        setOriginalSettings(values);
+        reset(values);
+        successTimerRef.current = window.setTimeout(
+          () => setSuccess(false),
+          3000
+        );
       } else {
         setError(t("globalSettings.saveError"));
       }
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : t("globalSettings.saveError")
-      );
+      setError(err instanceof Error ? err.message : t("globalSettings.saveError"));
     } finally {
       setSaving(false);
     }
-  };
+  });
 
-  const handleCancel = () => {
-    if (originalSettings) {
-      setSettings(JSON.parse(JSON.stringify(originalSettings))); // Восстанавливаем из оригинала
-      setError(null);
-      setSuccess(false);
-    }
-  };
-
-  const handleChange = (field: keyof GlobalSettings, value: any) => {
-    if (!settings) return;
-    setSettings({ ...settings, [field]: value });
+  const onCancel = () => {
+    if (!originalSettings) return;
+    reset(originalSettings);
+    setError(null);
+    setSuccess(false);
+    clearSuccessTimer();
   };
 
   if (loading) {
@@ -100,7 +126,7 @@ export default function GlobalSettings() {
     );
   }
 
-  if (!settings) {
+  if (!originalSettings) {
     return <Alert severity="error">{t("globalSettings.loadError")}</Alert>;
   }
 
@@ -109,7 +135,7 @@ export default function GlobalSettings() {
       <Box
         sx={{
           position: "sticky",
-          top: 64, // Высота основного AppBar
+          top: 64,
           bgcolor: "background.paper",
           boxShadow: 1,
           zIndex: (theme) => theme.zIndex.drawer - 1,
@@ -127,10 +153,10 @@ export default function GlobalSettings() {
             {t("globalSettings.title")}
           </Typography>
           <Box sx={{ display: "flex", gap: 2 }}>
-            {hasChanges && (
+            {isDirty && (
               <Button
                 variant="outlined"
-                onClick={handleCancel}
+                onClick={onCancel}
                 disabled={saving || loading}
               >
                 {t("common.cancel")}
@@ -138,8 +164,8 @@ export default function GlobalSettings() {
             )}
             <Button
               variant="contained"
-              onClick={handleSave}
-              disabled={saving || loading || !hasChanges}
+              onClick={onSave}
+              disabled={saving || loading || !isDirty}
               startIcon={
                 saving ? <CircularProgress size={20} color="inherit" /> : null
               }
@@ -170,8 +196,7 @@ export default function GlobalSettings() {
           <TextField
             fullWidth
             label={t("globalSettings.llm.model")}
-            value={settings.llmModel}
-            onChange={(e) => handleChange("llmModel", e.target.value)}
+            {...register("llmModel")}
             margin="normal"
             helperText={t("globalSettings.llm.modelHelper")}
           />
@@ -185,12 +210,9 @@ export default function GlobalSettings() {
             fullWidth
             type="number"
             label={t("globalSettings.history.maxLength")}
-            value={settings.historyMaxLen}
-            onChange={(e) =>
-              handleChange("historyMaxLen", parseInt(e.target.value) || 0)
-            }
+            {...register("historyMaxLen", { valueAsNumber: true })}
             margin="normal"
-            inputProps={{ min: 1, max: 1000 }}
+            slotProps={{ htmlInput: { min: 1, max: 1000 } }}
             helperText={t("globalSettings.history.maxLengthHelper")}
           />
         </Paper>
@@ -202,20 +224,28 @@ export default function GlobalSettings() {
           <Box sx={{ px: 2, py: 1 }}>
             <Typography gutterBottom>
               {t("globalSettings.stupidity.probabilityValue", {
-                value: settings.stupidCheck.toFixed(2),
+                value: stupidCheckValue.toFixed(2),
               })}
             </Typography>
-            <Slider
-              value={settings.stupidCheck}
-              onChange={(_, value) => handleChange("stupidCheck", value)}
-              min={0}
-              max={1}
-              step={0.01}
-              marks={[
-                { value: 0, label: "0" },
-                { value: 0.5, label: "0.5" },
-                { value: 1, label: "1" },
-              ]}
+            <Controller
+              name="stupidCheck"
+              control={control}
+              render={({ field }) => (
+                <Slider
+                  value={field.value}
+                  onChange={(_, value) =>
+                    field.onChange(Array.isArray(value) ? value[0] : value)
+                  }
+                  min={0}
+                  max={1}
+                  step={0.01}
+                  marks={[
+                    { value: 0, label: "0" },
+                    { value: 0.5, label: "0.5" },
+                    { value: 1, label: "1" },
+                  ]}
+                />
+              )}
             />
             <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
               {t("globalSettings.stupidity.probabilityHelper")}
@@ -231,10 +261,9 @@ export default function GlobalSettings() {
             fullWidth
             type="time"
             label={t("globalSettings.jokes.time")}
-            value={settings.dailyJokesTime}
-            onChange={(e) => handleChange("dailyJokesTime", e.target.value)}
+            {...register("dailyJokesTime")}
             margin="normal"
-            InputLabelProps={{ shrink: true }}
+            slotProps={{ inputLabel: { shrink: true } }}
             helperText={t("globalSettings.jokes.timeHelper")}
           />
         </Paper>
@@ -249,8 +278,7 @@ export default function GlobalSettings() {
             multiline
             rows={8}
             label={t("globalSettings.prompts.ai.label")}
-            value={settings.aiInstructions}
-            onChange={(e) => handleChange("aiInstructions", e.target.value)}
+            {...register("aiInstructions")}
             margin="normal"
             helperText={t("globalSettings.prompts.ai.helper")}
           />
@@ -262,10 +290,7 @@ export default function GlobalSettings() {
             multiline
             rows={5}
             label={t("globalSettings.prompts.stupidity.label")}
-            value={settings.stupidityInstructions}
-            onChange={(e) =>
-              handleChange("stupidityInstructions", e.target.value)
-            }
+            {...register("stupidityInstructions")}
             margin="normal"
             helperText={t("globalSettings.prompts.stupidity.helper")}
           />
@@ -277,8 +302,7 @@ export default function GlobalSettings() {
             multiline
             rows={5}
             label={t("globalSettings.prompts.joke.label")}
-            value={settings.jokeInstructions}
-            onChange={(e) => handleChange("jokeInstructions", e.target.value)}
+            {...register("jokeInstructions")}
             margin="normal"
             helperText={t("globalSettings.prompts.joke.helper")}
           />
