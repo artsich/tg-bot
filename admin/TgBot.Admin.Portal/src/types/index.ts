@@ -1,23 +1,23 @@
 // Типы для глобальных настроек
 export interface GlobalSettings {
-  llm_model: string;
-  history_max_len: number;
-  stupid_check: number; // 0.0 - 1.0
-  daily_jokes_time: string; // "HH:MM" format
-  ai_instructions: string;
-  stupidity_instructions: string;
-  joke_instructions: string;
+  llmModel: string;
+  historyMaxLen: number;
+  stupidCheck: number; // 0.0 - 1.0
+  dailyJokesTime: string; // "HH:MM" format
+  aiInstructions: string;
+  stupidityInstructions: string;
+  jokeInstructions: string;
 }
 
 // Типы для чат-специфичных настроек
 export interface ChatSettings {
-  chat_id: number;
-  stupidity_check: boolean;
+  chatId: number;
+  stupidityCheck: boolean;
 }
 
 // Типы для подписки на шутки
 export interface JokeSubscription {
-  chat_id: number;
+  chatId: number;
   topic: string;
 }
 
@@ -31,10 +31,10 @@ export type ChatType =
 
 // Расширенная информация о чате для списка
 export interface ChatInfo {
-  chat_id: number;
-  chat_type?: ChatType;
-  stupidity_check: boolean;
-  joke_subscription?: JokeSubscription | null;
+  chatId: number;
+  chatType?: ChatType;
+  stupidityCheck: boolean;
+  jokeSubscription?: JokeSubscription | null;
 }
 
 // API Response типы

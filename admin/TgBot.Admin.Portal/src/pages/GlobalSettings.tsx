@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useState, useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Box,
   Paper,
@@ -11,14 +11,15 @@ import {
   CircularProgress,
   Divider,
   Toolbar,
-} from '@mui/material';
-import { api } from '../api/client';
-import type { GlobalSettings } from '../types';
+} from "@mui/material";
+import { api } from "../api/client";
+import type { GlobalSettings } from "../types";
 
 export default function GlobalSettings() {
   const { t } = useTranslation();
   const [settings, setSettings] = useState<GlobalSettings | null>(null);
-  const [originalSettings, setOriginalSettings] = useState<GlobalSettings | null>(null);
+  const [originalSettings, setOriginalSettings] =
+    useState<GlobalSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,18 +37,19 @@ export default function GlobalSettings() {
       if (response.success) {
         const data = response.data;
         setSettings(data);
-        setOriginalSettings(JSON.parse(JSON.stringify(data))); // Deep copy
+        setOriginalSettings({ ...data }); // Deep copy
       } else {
-        setError(t('globalSettings.loadError'));
+        setError(t("globalSettings.loadError"));
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('globalSettings.loadError'));
+      setError(
+        err instanceof Error ? err.message : t("globalSettings.loadError")
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  // Проверка наличия изменений
   const hasChanges = useMemo(() => {
     if (!settings || !originalSettings) return false;
     return JSON.stringify(settings) !== JSON.stringify(originalSettings);
@@ -66,10 +68,12 @@ export default function GlobalSettings() {
         setOriginalSettings(JSON.parse(JSON.stringify(settings))); // Обновляем оригинал
         setTimeout(() => setSuccess(false), 3000);
       } else {
-        setError(t('globalSettings.saveError'));
+        setError(t("globalSettings.saveError"));
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('globalSettings.saveError'));
+      setError(
+        err instanceof Error ? err.message : t("globalSettings.saveError")
+      );
     } finally {
       setSaving(false);
     }
@@ -90,52 +94,57 @@ export default function GlobalSettings() {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+      <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
         <CircularProgress />
       </Box>
     );
   }
 
   if (!settings) {
-    return (
-      <Alert severity="error">{t('globalSettings.loadError')}</Alert>
-    );
+    return <Alert severity="error">{t("globalSettings.loadError")}</Alert>;
   }
 
   return (
     <Box>
-      {/* Sticky Header с кнопками */}
       <Box
         sx={{
-          position: 'sticky',
+          position: "sticky",
           top: 64, // Высота основного AppBar
-          bgcolor: 'background.paper',
+          bgcolor: "background.paper",
           boxShadow: 1,
           zIndex: (theme) => theme.zIndex.drawer - 1,
           mb: 3,
         }}
       >
-        <Toolbar sx={{ justifyContent: 'space-between', px: 2, minHeight: '64px !important' }}>
+        <Toolbar
+          sx={{
+            justifyContent: "space-between",
+            px: 2,
+            minHeight: "64px !important",
+          }}
+        >
           <Typography variant="h5" component="h1" sx={{ fontWeight: 500 }}>
-            {t('globalSettings.title')}
+            {t("globalSettings.title")}
           </Typography>
-          <Box sx={{ display: 'flex', gap: 2 }}>
+          <Box sx={{ display: "flex", gap: 2 }}>
             {hasChanges && (
               <Button
                 variant="outlined"
                 onClick={handleCancel}
                 disabled={saving || loading}
               >
-                {t('common.cancel')}
+                {t("common.cancel")}
               </Button>
             )}
             <Button
               variant="contained"
               onClick={handleSave}
               disabled={saving || loading || !hasChanges}
-              startIcon={saving ? <CircularProgress size={20} color="inherit" /> : null}
+              startIcon={
+                saving ? <CircularProgress size={20} color="inherit" /> : null
+              }
             >
-              {saving ? t('common.saving') : t('common.save')}
+              {saving ? t("common.saving") : t("common.save")}
             </Button>
           </Box>
         </Toolbar>
@@ -150,126 +159,131 @@ export default function GlobalSettings() {
 
         {success && (
           <Alert severity="success" sx={{ mb: 2 }}>
-            {t('globalSettings.saveSuccess')}
+            {t("globalSettings.saveSuccess")}
           </Alert>
         )}
 
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          {t('globalSettings.llm.title')}
-        </Typography>
-        <TextField
-          fullWidth
-          label={t('globalSettings.llm.model')}
-          value={settings.llm_model}
-          onChange={(e) => handleChange('llm_model', e.target.value)}
-          margin="normal"
-          helperText={t('globalSettings.llm.modelHelper')}
-        />
-      </Paper>
-
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          {t('globalSettings.history.title')}
-        </Typography>
-        <TextField
-          fullWidth
-          type="number"
-          label={t('globalSettings.history.maxLength')}
-          value={settings.history_max_len}
-          onChange={(e) => handleChange('history_max_len', parseInt(e.target.value) || 0)}
-          margin="normal"
-          inputProps={{ min: 1, max: 1000 }}
-          helperText={t('globalSettings.history.maxLengthHelper')}
-        />
-      </Paper>
-
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          {t('globalSettings.stupidity.title')}
-        </Typography>
-        <Box sx={{ px: 2, py: 1 }}>
-          <Typography gutterBottom>
-            {t('globalSettings.stupidity.probabilityValue', { value: settings.stupid_check.toFixed(2) })}
+        <Paper sx={{ p: 3, mb: 3 }}>
+          <Typography variant="h6" gutterBottom>
+            {t("globalSettings.llm.title")}
           </Typography>
-          <Slider
-            value={settings.stupid_check}
-            onChange={(_, value) => handleChange('stupid_check', value)}
-            min={0}
-            max={1}
-            step={0.01}
-            marks={[
-              { value: 0, label: '0' },
-              { value: 0.5, label: '0.5' },
-              { value: 1, label: '1' },
-            ]}
+          <TextField
+            fullWidth
+            label={t("globalSettings.llm.model")}
+            value={settings.llmModel}
+            onChange={(e) => handleChange("llmModel", e.target.value)}
+            margin="normal"
+            helperText={t("globalSettings.llm.modelHelper")}
           />
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-            {t('globalSettings.stupidity.probabilityHelper')}
+        </Paper>
+
+        <Paper sx={{ p: 3, mb: 3 }}>
+          <Typography variant="h6" gutterBottom>
+            {t("globalSettings.history.title")}
           </Typography>
-        </Box>
-      </Paper>
+          <TextField
+            fullWidth
+            type="number"
+            label={t("globalSettings.history.maxLength")}
+            value={settings.historyMaxLen}
+            onChange={(e) =>
+              handleChange("historyMaxLen", parseInt(e.target.value) || 0)
+            }
+            margin="normal"
+            inputProps={{ min: 1, max: 1000 }}
+            helperText={t("globalSettings.history.maxLengthHelper")}
+          />
+        </Paper>
 
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          {t('globalSettings.jokes.title')}
-        </Typography>
-        <TextField
-          fullWidth
-          type="time"
-          label={t('globalSettings.jokes.time')}
-          value={settings.daily_jokes_time}
-          onChange={(e) => handleChange('daily_jokes_time', e.target.value)}
-          margin="normal"
-          InputLabelProps={{ shrink: true }}
-          helperText={t('globalSettings.jokes.timeHelper')}
-        />
-      </Paper>
+        <Paper sx={{ p: 3, mb: 3 }}>
+          <Typography variant="h6" gutterBottom>
+            {t("globalSettings.stupidity.title")}
+          </Typography>
+          <Box sx={{ px: 2, py: 1 }}>
+            <Typography gutterBottom>
+              {t("globalSettings.stupidity.probabilityValue", {
+                value: settings.stupidCheck.toFixed(2),
+              })}
+            </Typography>
+            <Slider
+              value={settings.stupidCheck}
+              onChange={(_, value) => handleChange("stupidCheck", value)}
+              min={0}
+              max={1}
+              step={0.01}
+              marks={[
+                { value: 0, label: "0" },
+                { value: 0.5, label: "0.5" },
+                { value: 1, label: "1" },
+              ]}
+            />
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+              {t("globalSettings.stupidity.probabilityHelper")}
+            </Typography>
+          </Box>
+        </Paper>
 
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          {t('globalSettings.prompts.title')}
-        </Typography>
-        
-        <TextField
-          fullWidth
-          multiline
-          rows={8}
-          label={t('globalSettings.prompts.ai.label')}
-          value={settings.ai_instructions}
-          onChange={(e) => handleChange('ai_instructions', e.target.value)}
-          margin="normal"
-          helperText={t('globalSettings.prompts.ai.helper')}
-        />
+        <Paper sx={{ p: 3, mb: 3 }}>
+          <Typography variant="h6" gutterBottom>
+            {t("globalSettings.jokes.title")}
+          </Typography>
+          <TextField
+            fullWidth
+            type="time"
+            label={t("globalSettings.jokes.time")}
+            value={settings.dailyJokesTime}
+            onChange={(e) => handleChange("dailyJokesTime", e.target.value)}
+            margin="normal"
+            InputLabelProps={{ shrink: true }}
+            helperText={t("globalSettings.jokes.timeHelper")}
+          />
+        </Paper>
 
-        <Divider sx={{ my: 3 }} />
+        <Paper sx={{ p: 3, mb: 3 }}>
+          <Typography variant="h6" gutterBottom>
+            {t("globalSettings.prompts.title")}
+          </Typography>
 
-        <TextField
-          fullWidth
-          multiline
-          rows={5}
-          label={t('globalSettings.prompts.stupidity.label')}
-          value={settings.stupidity_instructions}
-          onChange={(e) => handleChange('stupidity_instructions', e.target.value)}
-          margin="normal"
-          helperText={t('globalSettings.prompts.stupidity.helper')}
-        />
+          <TextField
+            fullWidth
+            multiline
+            rows={8}
+            label={t("globalSettings.prompts.ai.label")}
+            value={settings.aiInstructions}
+            onChange={(e) => handleChange("aiInstructions", e.target.value)}
+            margin="normal"
+            helperText={t("globalSettings.prompts.ai.helper")}
+          />
 
-        <Divider sx={{ my: 3 }} />
+          <Divider sx={{ my: 3 }} />
 
-        <TextField
-          fullWidth
-          multiline
-          rows={5}
-          label={t('globalSettings.prompts.joke.label')}
-          value={settings.joke_instructions}
-          onChange={(e) => handleChange('joke_instructions', e.target.value)}
-          margin="normal"
-          helperText={t('globalSettings.prompts.joke.helper')}
-        />
-      </Paper>
+          <TextField
+            fullWidth
+            multiline
+            rows={5}
+            label={t("globalSettings.prompts.stupidity.label")}
+            value={settings.stupidityInstructions}
+            onChange={(e) =>
+              handleChange("stupidityInstructions", e.target.value)
+            }
+            margin="normal"
+            helperText={t("globalSettings.prompts.stupidity.helper")}
+          />
+
+          <Divider sx={{ my: 3 }} />
+
+          <TextField
+            fullWidth
+            multiline
+            rows={5}
+            label={t("globalSettings.prompts.joke.label")}
+            value={settings.jokeInstructions}
+            onChange={(e) => handleChange("jokeInstructions", e.target.value)}
+            margin="normal"
+            helperText={t("globalSettings.prompts.joke.helper")}
+          />
+        </Paper>
       </Box>
     </Box>
   );
 }
-

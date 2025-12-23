@@ -16,9 +16,9 @@ import {
 import { api } from '../api/client';
 
 interface ChatSettingsData {
-  chat_id: number;
-  stupidity_check: boolean;
-  joke_subscription?: {
+  chatId: number;
+  stupidityCheck: boolean;
+  jokeSubscription?: {
     topic: string;
   } | null;
 }
@@ -69,14 +69,14 @@ export default function ChatSettings() {
       setSuccess(false);
 
       const updateData: any = {
-        stupidity_check: settings.stupidity_check,
+        stupidityCheck: settings.stupidityCheck,
       };
 
-      if (settings.joke_subscription) {
-        updateData.joke_subscribed = true;
-        updateData.joke_topic = settings.joke_subscription.topic || '';
+      if (settings.jokeSubscription) {
+        updateData.jokeSubscribed = true;
+        updateData.jokeTopic = settings.jokeSubscription.topic || '';
       } else {
-        updateData.joke_subscribed = false;
+        updateData.jokeSubscribed = false;
       }
 
       const response = await api.updateChatSettings(chatIdNum, updateData);
@@ -102,8 +102,8 @@ export default function ChatSettings() {
     if (!settings) return;
     setSettings({
       ...settings,
-      joke_subscription: subscribed
-        ? { topic: settings.joke_subscription?.topic || '' }
+      jokeSubscription: subscribed
+        ? { topic: settings.jokeSubscription?.topic || '' }
         : null,
     });
   };
@@ -158,7 +158,7 @@ export default function ChatSettings() {
         <TextField
           fullWidth
           label={t('chats.settings.info.chatId')}
-          value={settings.chat_id}
+          value={settings.chatId}
           margin="normal"
           InputProps={{ readOnly: true }}
           helperText={t('chats.settings.info.chatIdHelper')}
@@ -172,8 +172,8 @@ export default function ChatSettings() {
         <FormControlLabel
           control={
             <Switch
-              checked={settings.stupidity_check}
-              onChange={(e) => handleChange('stupidity_check', e.target.checked)}
+              checked={settings.stupidityCheck}
+              onChange={(e) => handleChange('stupidityCheck', e.target.checked)}
             />
           }
           label={t('chats.settings.stupidity.enabled')}
@@ -190,22 +190,22 @@ export default function ChatSettings() {
         <FormControlLabel
           control={
             <Switch
-              checked={!!settings.joke_subscription}
+              checked={!!settings.jokeSubscription}
               onChange={(e) => handleJokeSubscriptionChange(e.target.checked)}
             />
           }
           label={t('chats.settings.jokes.subscribe')}
         />
         
-        {settings.joke_subscription && (
+        {settings.jokeSubscription && (
           <>
             <Divider sx={{ my: 2 }} />
             <TextField
               fullWidth
               label={t('chats.settings.jokes.topic')}
-              value={settings.joke_subscription.topic}
+              value={settings.jokeSubscription.topic}
               onChange={(e) =>
-                handleChange('joke_subscription', {
+                handleChange('jokeSubscription', {
                   topic: e.target.value,
                 })
               }

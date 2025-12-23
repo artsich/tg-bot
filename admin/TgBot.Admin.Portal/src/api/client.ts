@@ -34,7 +34,7 @@ const realApi = {
     return response.json();
   },
 
-  async getChatSettings(chatId: number): Promise<ApiResponse<ChatSettings & { joke_subscription?: { topic: string } | null }>> {
+  async getChatSettings(chatId: number): Promise<ApiResponse<ChatSettings & { jokeSubscription?: { topic: string } | null }>> {
     const response = await fetch(`${API_URL}${API_ENDPOINTS.chatSettings(chatId)}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -44,8 +44,8 @@ const realApi = {
 
   async updateChatSettings(
     chatId: number,
-    settings: Partial<ChatSettings & { joke_topic?: string; joke_subscribed?: boolean }>
-  ): Promise<ApiResponse<ChatSettings & { joke_subscription?: { topic: string } | null }>> {
+    settings: Partial<ChatSettings & { jokeTopic?: string; jokeSubscribed?: boolean }>
+  ): Promise<ApiResponse<ChatSettings & { jokeSubscription?: { topic: string } | null }>> {
     const response = await fetch(`${API_URL}${API_ENDPOINTS.chatSettings(chatId)}`, {
       method: 'PUT',
       headers: {

@@ -102,30 +102,30 @@ export default function ChatsList() {
             </TableHead>
             <TableBody>
               {chats.map((chat) => (
-                <TableRow key={chat.chat_id} hover>
-                  <TableCell>{chat.chat_id}</TableCell>
-                  <TableCell>{getChatTypeLabel(chat.chat_type)}</TableCell>
+                <TableRow key={chat.chatId} hover>
+                  <TableCell>{chat.chatId}</TableCell>
+                  <TableCell>{getChatTypeLabel(chat.chatType)}</TableCell>
                   <TableCell align="center">
                     <Chip
-                      label={chat.stupidity_check ? t('chats.list.status.enabled') : t('chats.list.status.disabled')}
-                      color={chat.stupidity_check ? 'success' : 'default'}
+                      label={chat.stupidityCheck ? t('chats.list.status.enabled') : t('chats.list.status.disabled')}
+                      color={chat.stupidityCheck ? 'success' : 'default'}
                       size="small"
                     />
                   </TableCell>
                   <TableCell align="center">
                     <Chip
-                      label={chat.joke_subscription ? t('chats.list.status.subscribed') : t('chats.list.status.notSubscribed')}
-                      color={chat.joke_subscription ? 'primary' : 'default'}
+                      label={chat.jokeSubscription ? t('chats.list.status.subscribed') : t('chats.list.status.notSubscribed')}
+                      color={chat.jokeSubscription ? 'primary' : 'default'}
                       size="small"
                     />
                   </TableCell>
                   <TableCell>
-                    {chat.joke_subscription?.topic || '-'}
+                    {chat.jokeSubscription?.topic || '-'}
                   </TableCell>
                   <TableCell align="right">
                     <IconButton
                       size="small"
-                      onClick={() => navigate(`/chats/${chat.chat_id}`)}
+                      onClick={() => navigate(`/chats/${chat.chatId}`)}
                     >
                       <EditIcon />
                     </IconButton>
