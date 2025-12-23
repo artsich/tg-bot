@@ -1,6 +1,7 @@
+using Microsoft.OpenApi;
 using MongoDB.Driver;
-using TgChat.Admin.Api.Health;
 using TgChat.Admin.Api.Api;
+using TgChat.Admin.Api.Health;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,9 +34,17 @@ builder.Services
 	.AddHealthChecks()
 	.AddCheck<MongoPingHealthCheck>("mongo");
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 
 app.UseCors();
+if (app.Environment.IsDevelopment())
+{
+	app.UseSwagger();
+	app.UseSwaggerUI();
+}
 
 app.MapAdminApi();
 
