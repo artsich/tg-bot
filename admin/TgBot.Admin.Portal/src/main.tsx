@@ -4,6 +4,11 @@ import "./index.css";
 import "./i18n/config";
 import App from "./App";
 
+// React Grab (dev-only)
+if (import.meta.env.DEV) {
+  import("react-grab");
+}
+
 const rootElement = document.getElementById("root");
 
 if (!rootElement) {
