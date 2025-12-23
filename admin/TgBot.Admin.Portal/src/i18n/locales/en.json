@@ -13,25 +13,8 @@
     "refresh": "Refresh"
   },
   "nav": {
-    "dashboard": "Dashboard",
     "globalSettings": "Global Settings",
     "chatSettings": "Chat Settings"
-  },
-  "dashboard": {
-    "title": "Control Panel",
-    "welcome": "Welcome to TgBot admin panel. Here you can manage bot settings.",
-    "globalSettingsCard": {
-      "title": "Global Settings",
-      "description": "Configure bot parameters: LLM model, history length, prompts and schedule."
-    },
-    "chatSettingsCard": {
-      "title": "Chat Settings",
-      "description": "Manage settings for each chat: stupidity check, joke subscriptions."
-    },
-    "info": {
-      "title": "Information",
-      "mockApi": "Currently using mock API. When backend is ready, switching to real API will happen automatically through configuration."
-    }
   },
   "globalSettings": {
     "title": "Global Settings",

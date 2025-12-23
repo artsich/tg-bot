@@ -22,7 +22,12 @@ export interface JokeSubscription {
 }
 
 // Тип чата (если доступно)
-export type ChatType = 'private' | 'group' | 'supergroup' | 'channel' | 'unknown';
+export type ChatType =
+  | "private"
+  | "group"
+  | "supergroup"
+  | "channel"
+  | "unknown";
 
 // Расширенная информация о чате для списка
 export interface ChatInfo {
@@ -44,4 +49,3 @@ export interface ApiError {
   message: string;
   code?: string;
 }
-
