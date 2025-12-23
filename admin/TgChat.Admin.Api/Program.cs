@@ -1,7 +1,9 @@
-using Microsoft.OpenApi;
+using FluentValidation;
 using MongoDB.Driver;
 using TgChat.Admin.Api.Api;
 using TgChat.Admin.Api.Health;
+using TgChat.Admin.Api.Settings;
+using TgChat.Admin.Api.Settings.Global;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +31,19 @@ builder.Services.AddSingleton<IMongoClient>(_ =>
 
 	return new MongoClient(settings);
 });
+
+builder.Services.AddSingleton<IMongoDatabase>(sp =>
+{
+	var dbName = builder.Configuration.GetValue<string>("Mongo:Database")
+		?? builder.Configuration.GetValue<string>("Mongo__Database")
+		?? "tgchat";
+
+	return sp.GetRequiredService<IMongoClient>().GetDatabase(dbName);
+});
+
+builder.Services.AddSingleton<GlobalSettingsRepository>();
+
+builder.Services.AddValidatorsFromAssemblyContaining<GlobalSettingsPatchValidator>(ServiceLifetime.Transient);
 
 builder.Services
 	.AddHealthChecks()

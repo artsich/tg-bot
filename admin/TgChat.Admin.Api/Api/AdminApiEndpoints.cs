@@ -13,6 +13,8 @@ public static class AdminApiEndpoints
 			AllowCachingResponses = false
 		});
 
+		api.MapGlobalSettingsApi();
+
 		return endpoints;
 	}
 }
