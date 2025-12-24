@@ -1,9 +1,9 @@
-using TgChat.Admin.Api.Api.Contracts;
-using TgChat.Admin.Api.Api.Validation;
-using TgChat.Admin.Api.Settings;
-using TgChat.Admin.Api.Settings.Global;
+using TgBot.Admin.Api.Api.Contracts;
+using TgBot.Admin.Api.Api.Validation;
+using TgBot.Admin.Api.Settings;
+using TgBot.Admin.Api.Settings.Global;
 
-namespace TgChat.Admin.Api.Api;
+namespace TgBot.Admin.Api.Api;
 
 public static class GlobalSettingsApi
 {

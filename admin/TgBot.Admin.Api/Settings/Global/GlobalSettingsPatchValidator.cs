@@ -1,7 +1,7 @@
 using FluentValidation;
-using TgChat.Admin.Api.Api.Contracts;
+using TgBot.Admin.Api.Api.Contracts;
 
-namespace TgChat.Admin.Api.Settings.Global;
+namespace TgBot.Admin.Api.Settings.Global;
 
 public sealed class GlobalSettingsPatchValidator : AbstractValidator<GlobalSettingsPatch>
 {

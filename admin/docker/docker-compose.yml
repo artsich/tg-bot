@@ -9,7 +9,7 @@ services:
 
   backend:
     build:
-      context: ../TgChat.Admin.Api
+      context: ../TgBot.Admin.Api
       dockerfile: Dockerfile
       target: final
     restart: unless-stopped

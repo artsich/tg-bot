@@ -1,6 +1,6 @@
 using MongoDB.Driver;
 
-namespace TgChat.Admin.Api.Settings.Global;
+namespace TgBot.Admin.Api.Settings.Global;
 
 public sealed class GlobalSettingsRepository(IMongoDatabase db)
 {

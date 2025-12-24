@@ -1,4 +1,4 @@
-namespace TgChat.Admin.Api.Api.Contracts;
+namespace TgBot.Admin.Api.Api.Contracts;
 
 public sealed record GlobalSettings(
 	string LlmModel,

@@ -2,7 +2,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace TgChat.Admin.Api.Health;
+namespace TgBot.Admin.Api.Health;
 
 public sealed class MongoPingHealthCheck(IMongoClient mongo) : IHealthCheck
 {

@@ -1,10 +1,9 @@
 using FluentValidation;
 using MongoDB.Driver;
-using TgChat.Admin.Api.Api;
-using TgChat.Admin.Api.Health;
-using TgChat.Admin.Api.Settings;
-using TgChat.Admin.Api.Settings.Chats;
-using TgChat.Admin.Api.Settings.Global;
+using TgBot.Admin.Api.Api;
+using TgBot.Admin.Api.Health;
+using TgBot.Admin.Api.Settings.Chats;
+using TgBot.Admin.Api.Settings.Global;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,7 +36,7 @@ builder.Services.AddSingleton<IMongoDatabase>(sp =>
 {
 	var dbName = builder.Configuration.GetValue<string>("Mongo:Database")
 		?? builder.Configuration.GetValue<string>("Mongo__Database")
-		?? "tgchat";
+	?? "tgbot";
 
 	return sp.GetRequiredService<IMongoClient>().GetDatabase(dbName);
 });

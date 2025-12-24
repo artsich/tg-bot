@@ -1,8 +1,8 @@
-using TgChat.Admin.Api.Api.Contracts;
-using TgChat.Admin.Api.Api.Validation;
-using TgChat.Admin.Api.Settings.Chats;
+using TgBot.Admin.Api.Api.Contracts;
+using TgBot.Admin.Api.Api.Validation;
+using TgBot.Admin.Api.Settings.Chats;
 
-namespace TgChat.Admin.Api.Api;
+namespace TgBot.Admin.Api.Api;
 
 public static class ChatSettingsApi
 {

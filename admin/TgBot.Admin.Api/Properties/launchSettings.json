@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "TgChat.Admin.Api": {
+    "TgBot.Admin.Api": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

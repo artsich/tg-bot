@@ -1,7 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace TgChat.Admin.Api.Settings.Global;
+namespace TgBot.Admin.Api.Settings.Global;
 
 [BsonIgnoreExtraElements]
 public sealed class GlobalSettingsDocument

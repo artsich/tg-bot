@@ -1,7 +1,7 @@
 using FluentValidation;
-using TgChat.Admin.Api.Api.Contracts;
+using TgBot.Admin.Api.Api.Contracts;
 
-namespace TgChat.Admin.Api.Settings.Chats;
+namespace TgBot.Admin.Api.Settings.Chats;
 
 public sealed class ChatSettingsPutValidator : AbstractValidator<ChatSettingsPut>
 {

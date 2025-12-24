@@ -1,6 +1,6 @@
 using MongoDB.Driver;
 
-namespace TgChat.Admin.Api.Settings.Chats;
+namespace TgBot.Admin.Api.Settings.Chats;
 
 public sealed class ChatSettingsRepository(IMongoDatabase db)
 {

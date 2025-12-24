@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
-namespace TgChat.Admin.Api.Api;
+namespace TgBot.Admin.Api.Api;
 
 public static class AdminApiEndpoints
 {

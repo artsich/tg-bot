@@ -1,4 +1,4 @@
-namespace TgChat.Admin.Api.Api.Validation;
+namespace TgBot.Admin.Api.Api.Validation;
 
 public static class ValidationExtensions
 {

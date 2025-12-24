@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgChat.Admin.Api", "TgChat.Admin.Api\TgChat.Admin.Api.csproj", "{7028F7AF-616A-43C1-BD77-C2717B28BACD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgBot.Admin.Api", "TgBot.Admin.Api\TgBot.Admin.Api.csproj", "{7028F7AF-616A-43C1-BD77-C2717B28BACD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

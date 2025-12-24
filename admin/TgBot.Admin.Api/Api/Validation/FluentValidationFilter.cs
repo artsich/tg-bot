@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace TgChat.Admin.Api.Api.Validation;
+namespace TgBot.Admin.Api.Api.Validation;
 
 public sealed class FluentValidationFilter<T> : IEndpointFilter where T : class
 {
