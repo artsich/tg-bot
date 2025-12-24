@@ -19,18 +19,14 @@ import {
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { api } from '../api/client';
-import type { ChatInfo } from '../types';
+import type { ChatSettings } from '../types';
 
 export default function ChatsList() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [chats, setChats] = useState<ChatInfo[]>([]);
+  const [chats, setChats] = useState<ChatSettings[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const getChatTypeLabel = (type?: string): string => {
-    return t(`chats.list.types.${type || 'unknown'}`);
-  };
 
   useEffect(() => {
     loadChats();
@@ -93,7 +89,6 @@ export default function ChatsList() {
             <TableHead>
               <TableRow>
                 <TableCell>{t('chats.list.columns.chatId')}</TableCell>
-                <TableCell>{t('chats.list.columns.chatType')}</TableCell>
                 <TableCell align="center">{t('chats.list.columns.stupidityCheck')}</TableCell>
                 <TableCell align="center">{t('chats.list.columns.jokeSubscription')}</TableCell>
                 <TableCell>{t('chats.list.columns.jokeTopic')}</TableCell>
@@ -104,7 +99,6 @@ export default function ChatsList() {
               {chats.map((chat) => (
                 <TableRow key={chat.chatId} hover>
                   <TableCell>{chat.chatId}</TableCell>
-                  <TableCell>{getChatTypeLabel(chat.chatType)}</TableCell>
                   <TableCell align="center">
                     <Chip
                       label={chat.stupidityCheck ? t('chats.list.status.enabled') : t('chats.list.status.disabled')}
@@ -114,13 +108,13 @@ export default function ChatsList() {
                   </TableCell>
                   <TableCell align="center">
                     <Chip
-                      label={chat.jokeSubscription ? t('chats.list.status.subscribed') : t('chats.list.status.notSubscribed')}
-                      color={chat.jokeSubscription ? 'primary' : 'default'}
+                      label={chat.jokeSubscribed ? t('chats.list.status.subscribed') : t('chats.list.status.notSubscribed')}
+                      color={chat.jokeSubscribed ? 'primary' : 'default'}
                       size="small"
                     />
                   </TableCell>
                   <TableCell>
-                    {chat.jokeSubscription?.topic || '-'}
+                    {chat.jokeTopic || '-'}
                   </TableCell>
                   <TableCell align="right">
                     <IconButton

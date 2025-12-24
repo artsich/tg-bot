@@ -66,7 +66,6 @@
       "loadError": "Failed to load chats list",
       "columns": {
         "chatId": "Chat ID",
-        "chatType": "Chat Type",
         "stupidityCheck": "Stupidity Check",
         "jokeSubscription": "Joke Subscription",
         "jokeTopic": "Joke Topic",

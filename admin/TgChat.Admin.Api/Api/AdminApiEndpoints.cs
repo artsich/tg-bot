@@ -14,6 +14,7 @@ public static class AdminApiEndpoints
 		});
 
 		api.MapGlobalSettingsApi();
+		api.MapChatSettingsApi();
 
 		return endpoints;
 	}

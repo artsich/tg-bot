@@ -104,7 +104,9 @@ export default function GlobalSettings() {
         setError(t("globalSettings.saveError"));
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : t("globalSettings.saveError"));
+      setError(
+        err instanceof Error ? err.message : t("globalSettings.saveError")
+      );
     } finally {
       setSaving(false);
     }

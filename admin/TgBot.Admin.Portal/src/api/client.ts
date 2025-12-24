@@ -1,9 +1,7 @@
-import { USE_MOCKS, API_URL, API_ENDPOINTS } from '../config/api';
-import { mockApi } from './mocks';
-import type { GlobalSettings, ChatInfo, ChatSettings, ApiResponse, ApiError } from '../types';
+import { API_URL, API_ENDPOINTS } from "../config/api";
+import type { GlobalSettings, ChatSettings, ApiResponse } from "../types";
 
-// Реальный API клиент (будет использоваться когда бэкенд готов)
-const realApi = {
+export const api = {
   async getGlobalSettings(): Promise<ApiResponse<GlobalSettings>> {
     const response = await fetch(`${API_URL}${API_ENDPOINTS.globalSettings}`);
     if (!response.ok) {
@@ -12,11 +10,13 @@ const realApi = {
     return response.json();
   },
 
-  async updateGlobalSettings(settings: Partial<GlobalSettings>): Promise<ApiResponse<GlobalSettings>> {
+  async updateGlobalSettings(
+    settings: Partial<GlobalSettings>
+  ): Promise<ApiResponse<GlobalSettings>> {
     const response = await fetch(`${API_URL}${API_ENDPOINTS.globalSettings}`, {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(settings),
     });
@@ -26,7 +26,7 @@ const realApi = {
     return response.json();
   },
 
-  async getChats(): Promise<ApiResponse<ChatInfo[]>> {
+  async getChats(): Promise<ApiResponse<ChatSettings[]>> {
     const response = await fetch(`${API_URL}${API_ENDPOINTS.chats}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -34,8 +34,10 @@ const realApi = {
     return response.json();
   },
 
-  async getChatSettings(chatId: number): Promise<ApiResponse<ChatSettings & { jokeSubscription?: { topic: string } | null }>> {
-    const response = await fetch(`${API_URL}${API_ENDPOINTS.chatSettings(chatId)}`);
+  async getChatSettings(chatId: number): Promise<ApiResponse<ChatSettings>> {
+    const response = await fetch(
+      `${API_URL}${API_ENDPOINTS.chatSettings(chatId)}`
+    );
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -44,15 +46,22 @@ const realApi = {
 
   async updateChatSettings(
     chatId: number,
-    settings: Partial<ChatSettings & { jokeTopic?: string; jokeSubscribed?: boolean }>
-  ): Promise<ApiResponse<ChatSettings & { jokeSubscription?: { topic: string } | null }>> {
-    const response = await fetch(`${API_URL}${API_ENDPOINTS.chatSettings(chatId)}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(settings),
-    });
+    settings: {
+      stupidityCheck: boolean;
+      jokeSubscribed: boolean;
+      jokeTopic: string;
+    }
+  ): Promise<ApiResponse<ChatSettings>> {
+    const response = await fetch(
+      `${API_URL}${API_ENDPOINTS.chatSettings(chatId)}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(settings),
+      }
+    );
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -60,9 +69,4 @@ const realApi = {
   },
 };
 
-// Экспортируем API клиент с автоматическим переключением между моками и реальным API
-export const api = USE_MOCKS ? mockApi : realApi;
-
-// Типы для удобства
 export type ApiClient = typeof api;
-

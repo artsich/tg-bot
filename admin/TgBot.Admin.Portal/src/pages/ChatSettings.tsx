@@ -18,9 +18,8 @@ import { api } from '../api/client';
 interface ChatSettingsData {
   chatId: number;
   stupidityCheck: boolean;
-  jokeSubscription?: {
-    topic: string;
-  } | null;
+  jokeSubscribed: boolean;
+  jokeTopic: string;
 }
 
 export default function ChatSettings() {
@@ -68,16 +67,11 @@ export default function ChatSettings() {
       setError(null);
       setSuccess(false);
 
-      const updateData: any = {
+      const updateData = {
         stupidityCheck: settings.stupidityCheck,
+        jokeSubscribed: settings.jokeSubscribed,
+        jokeTopic: settings.jokeTopic || '',
       };
-
-      if (settings.jokeSubscription) {
-        updateData.jokeSubscribed = true;
-        updateData.jokeTopic = settings.jokeSubscription.topic || '';
-      } else {
-        updateData.jokeSubscribed = false;
-      }
 
       const response = await api.updateChatSettings(chatIdNum, updateData);
       if (response.success) {
@@ -100,12 +94,8 @@ export default function ChatSettings() {
 
   const handleJokeSubscriptionChange = (subscribed: boolean) => {
     if (!settings) return;
-    setSettings({
-      ...settings,
-      jokeSubscription: subscribed
-        ? { topic: settings.jokeSubscription?.topic || '' }
-        : null,
-    });
+    // важно: topic не затираем, чтобы можно было отписаться и подписаться обратно с тем же topic
+    setSettings({ ...settings, jokeSubscribed: subscribed });
   };
 
   if (!chatIdNum) {
@@ -190,24 +180,22 @@ export default function ChatSettings() {
         <FormControlLabel
           control={
             <Switch
-              checked={!!settings.jokeSubscription}
+              checked={settings.jokeSubscribed}
               onChange={(e) => handleJokeSubscriptionChange(e.target.checked)}
             />
           }
           label={t('chats.settings.jokes.subscribe')}
         />
         
-        {settings.jokeSubscription && (
+        {settings.jokeSubscribed && (
           <>
             <Divider sx={{ my: 2 }} />
             <TextField
               fullWidth
               label={t('chats.settings.jokes.topic')}
-              value={settings.jokeSubscription.topic}
+              value={settings.jokeTopic}
               onChange={(e) =>
-                handleChange('jokeSubscription', {
-                  topic: e.target.value,
-                })
+                handleChange('jokeTopic', e.target.value)
               }
               margin="normal"
               helperText={t('chats.settings.jokes.topicHelper')}

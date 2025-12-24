@@ -3,6 +3,7 @@ using MongoDB.Driver;
 using TgChat.Admin.Api.Api;
 using TgChat.Admin.Api.Health;
 using TgChat.Admin.Api.Settings;
+using TgChat.Admin.Api.Settings.Chats;
 using TgChat.Admin.Api.Settings.Global;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -42,6 +43,7 @@ builder.Services.AddSingleton<IMongoDatabase>(sp =>
 });
 
 builder.Services.AddSingleton<GlobalSettingsRepository>();
+builder.Services.AddSingleton<ChatSettingsRepository>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<GlobalSettingsPatchValidator>(ServiceLifetime.Transient);
 
