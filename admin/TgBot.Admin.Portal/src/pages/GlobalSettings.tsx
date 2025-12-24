@@ -9,9 +9,9 @@ import {
   Button,
   Slider,
   Alert,
+  Snackbar,
   CircularProgress,
   Divider,
-  Toolbar,
 } from "@mui/material";
 import { api } from "../api/client";
 import type { GlobalSettings } from "../types";
@@ -108,6 +108,14 @@ export default function GlobalSettings() {
     clearSuccessTimer();
   };
 
+  const handleSuccessClose = (
+    _: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") return;
+    setSuccess(false);
+  };
+
   if (loading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
@@ -122,60 +130,60 @@ export default function GlobalSettings() {
 
   return (
     <Box>
+      <Snackbar
+        open={success}
+        autoHideDuration={3000}
+        onClose={handleSuccessClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        sx={{ mt: { xs: 8, sm: 9 }, mr: { xs: 2, sm: 3 } }}
+      >
+        <Alert
+          onClose={() => setSuccess(false)}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {t("globalSettings.saveSuccess")}
+        </Alert>
+      </Snackbar>
+
       <Box
         sx={{
-          position: "sticky",
-          top: 64,
-          bgcolor: "background.paper",
-          boxShadow: 1,
-          zIndex: (theme) => theme.zIndex.drawer - 1,
           mb: 3,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          gap: 2,
+          flexWrap: "wrap",
         }}
       >
-        <Toolbar
-          sx={{
-            justifyContent: "space-between",
-            px: 2,
-            minHeight: "64px !important",
-          }}
-        >
-          <Typography variant="h5" component="h1" sx={{ fontWeight: 500 }}>
-            {t("globalSettings.title")}
-          </Typography>
-          <Box sx={{ display: "flex", gap: 2 }}>
-            {isDirty && (
-              <Button
-                variant="outlined"
-                onClick={onCancel}
-                disabled={saving || loading}
-              >
-                {t("common.cancel")}
-              </Button>
-            )}
-            <Button
-              variant="contained"
-              onClick={onSave}
-              disabled={saving || loading || !isDirty}
-              startIcon={
-                saving ? <CircularProgress size={20} color="inherit" /> : null
-              }
-            >
-              {saving ? t("common.saving") : t("common.save")}
+        <Typography variant="h4" component="h1" sx={{ mr: "auto" }}>
+          {t("globalSettings.title")}
+        </Typography>
+
+        <Box sx={{ display: "flex", gap: 2 }}>
+          {isDirty && (
+            <Button variant="outlined" onClick={onCancel} disabled={saving}>
+              {t("common.cancel")}
             </Button>
-          </Box>
-        </Toolbar>
+          )}
+          <Button
+            variant="contained"
+            onClick={onSave}
+            disabled={saving || !isDirty}
+            startIcon={
+              saving ? <CircularProgress size={20} color="inherit" /> : null
+            }
+          >
+            {saving ? t("common.saving") : t("common.save")}
+          </Button>
+        </Box>
       </Box>
 
       <Box>
         {error && (
           <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
             {error}
-          </Alert>
-        )}
-
-        {success && (
-          <Alert severity="success" sx={{ mb: 2 }}>
-            {t("globalSettings.saveSuccess")}
           </Alert>
         )}
 
