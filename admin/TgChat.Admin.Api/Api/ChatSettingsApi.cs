@@ -12,16 +12,16 @@ public static class ChatSettingsApi
 		{
 			var docs = await repo.GetAll();
 			var data = docs.Select(ToChat).ToArray();
-			return Results.Ok(new ApiResponse<ChatSettings[]>(true, data));
+			return Results.Ok(data);
 		});
 
 		api.MapGet("/chats/{chatId:long}/settings", async (long chatId, ChatSettingsRepository repo) =>
 		{
 			var doc = await repo.Get(chatId);
 			if (doc is null)
-				return Results.Ok(new ApiResponse<ChatSettings?>(false, null, "Chat not found"));
+				return Results.NotFound();
 
-			return Results.Ok(new ApiResponse<ChatSettings>(true, ToChat(doc)));
+			return Results.Ok(ToChat(doc));
 		});
 
 		api.MapPut("/chats/{chatId:long}/settings", async (long chatId, ChatSettingsPut put, ChatSettingsRepository repo) =>
@@ -29,7 +29,7 @@ public static class ChatSettingsApi
 			var current = await repo.Get(chatId) ?? new ChatSettingsDocument { ChatId = chatId };
 			ApplyPut(current, put);
 			var saved = await repo.Upsert(current);
-			return Results.Ok(new ApiResponse<ChatSettings>(true, ToChat(saved)));
+			return Results.Ok(ToChat(saved));
 		}).WithFluentValidation<ChatSettingsPut>();
 
 		return api;

@@ -61,17 +61,11 @@ export default function GlobalSettings() {
       try {
         setLoading(true);
         setError(null);
-        const response = await api.getGlobalSettings();
-        if (response.success) {
-          setOriginalSettings(response.data);
-          reset(response.data);
-        } else {
-          setError(t("globalSettings.loadError"));
-        }
+        const settings = await api.getGlobalSettings();
+        setOriginalSettings(settings);
+        reset(settings);
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : t("globalSettings.loadError")
-        );
+        setError(t("globalSettings.loadError"));
       } finally {
         setLoading(false);
       }
@@ -91,22 +85,16 @@ export default function GlobalSettings() {
       setSuccess(false);
       clearSuccessTimer();
 
-      const response = await api.updateGlobalSettings(values);
-      if (response.success) {
-        setSuccess(true);
-        setOriginalSettings(values);
-        reset(values);
-        successTimerRef.current = window.setTimeout(
-          () => setSuccess(false),
-          3000
-        );
-      } else {
-        setError(t("globalSettings.saveError"));
-      }
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : t("globalSettings.saveError")
+      await api.updateGlobalSettings(values);
+      setSuccess(true);
+      setOriginalSettings(values);
+      reset(values);
+      successTimerRef.current = window.setTimeout(
+        () => setSuccess(false),
+        3000
       );
+    } catch (err) {
+      setError(t("globalSettings.saveError"));
     } finally {
       setSaving(false);
     }

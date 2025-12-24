@@ -12,7 +12,7 @@ public static class GlobalSettingsApi
 		api.MapGet("/settings/global", async (GlobalSettingsRepository repo) =>
 		{
 			var doc = await repo.Get();
-			return Results.Ok(new ApiResponse<GlobalSettings>(true, ToContract(doc)));
+			return Results.Ok(ToContract(doc));
 		});
 
 		api.MapPut("/settings/global", async (GlobalSettingsPatch patch, GlobalSettingsRepository repo) =>
@@ -20,7 +20,7 @@ public static class GlobalSettingsApi
 			var current = await repo.Get();
 			ApplyPatch(current, patch);
 			var saved = await repo.Update(current);
-			return Results.Ok(new ApiResponse<GlobalSettings>(true, ToContract(saved)));
+			return Results.Ok(ToContract(saved));
 		}).WithFluentValidation<GlobalSettingsPatch>();
 
 		return api;

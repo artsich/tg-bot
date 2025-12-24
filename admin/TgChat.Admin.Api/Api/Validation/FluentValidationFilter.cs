@@ -25,12 +25,7 @@ public sealed class FluentValidationFilter<T> : IEndpointFilter where T : class
 				g => g.Select(e => e.ErrorMessage).ToArray()
 			);
 
-		return Results.BadRequest(new
-		{
-			success = false,
-			message = "Validation failed",
-			errors
-		});
+		return Results.ValidationProblem(errors);
 	}
 }
 

@@ -1,8 +1,8 @@
 import { API_URL, API_ENDPOINTS } from "../config/api";
-import type { GlobalSettings, ChatSettings, ApiResponse } from "../types";
+import type { GlobalSettings, ChatSettings } from "../types";
 
 export const api = {
-  async getGlobalSettings(): Promise<ApiResponse<GlobalSettings>> {
+  async getGlobalSettings(): Promise<GlobalSettings> {
     const response = await fetch(`${API_URL}${API_ENDPOINTS.globalSettings}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -12,7 +12,7 @@ export const api = {
 
   async updateGlobalSettings(
     settings: Partial<GlobalSettings>
-  ): Promise<ApiResponse<GlobalSettings>> {
+  ): Promise<GlobalSettings> {
     const response = await fetch(`${API_URL}${API_ENDPOINTS.globalSettings}`, {
       method: "PUT",
       headers: {
@@ -26,7 +26,7 @@ export const api = {
     return response.json();
   },
 
-  async getChats(): Promise<ApiResponse<ChatSettings[]>> {
+  async getChats(): Promise<ChatSettings[]> {
     const response = await fetch(`${API_URL}${API_ENDPOINTS.chats}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -34,7 +34,7 @@ export const api = {
     return response.json();
   },
 
-  async getChatSettings(chatId: number): Promise<ApiResponse<ChatSettings>> {
+  async getChatSettings(chatId: number): Promise<ChatSettings> {
     const response = await fetch(
       `${API_URL}${API_ENDPOINTS.chatSettings(chatId)}`
     );
@@ -51,7 +51,7 @@ export const api = {
       jokeSubscribed: boolean;
       jokeTopic: string;
     }
-  ): Promise<ApiResponse<ChatSettings>> {
+  ): Promise<ChatSettings> {
     const response = await fetch(
       `${API_URL}${API_ENDPOINTS.chatSettings(chatId)}`,
       {

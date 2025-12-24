@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Box,
   Paper,
@@ -12,8 +12,8 @@ import {
   Alert,
   CircularProgress,
   Divider,
-} from '@mui/material';
-import { api } from '../api/client';
+} from "@mui/material";
+import { api } from "../api/client";
 
 interface ChatSettingsData {
   chatId: number;
@@ -46,14 +46,10 @@ export default function ChatSettings() {
     try {
       setLoading(true);
       setError(null);
-      const response = await api.getChatSettings(chatIdNum);
-      if (response.success) {
-        setSettings(response.data);
-      } else {
-        setError(t('chats.settings.loadError'));
-      }
+      const settings = await api.getChatSettings(chatIdNum);
+      setSettings(settings);
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('chats.settings.loadError'));
+      setError(t("chats.settings.loadError"));
     } finally {
       setLoading(false);
     }
@@ -70,18 +66,14 @@ export default function ChatSettings() {
       const updateData = {
         stupidityCheck: settings.stupidityCheck,
         jokeSubscribed: settings.jokeSubscribed,
-        jokeTopic: settings.jokeTopic || '',
+        jokeTopic: settings.jokeTopic || "",
       };
 
-      const response = await api.updateChatSettings(chatIdNum, updateData);
-      if (response.success) {
-        setSuccess(true);
-        setTimeout(() => setSuccess(false), 3000);
-      } else {
-        setError(t('chats.settings.saveError'));
-      }
+      await api.updateChatSettings(chatIdNum, updateData);
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('chats.settings.saveError'));
+      setError(t("chats.settings.saveError"));
     } finally {
       setSaving(false);
     }
@@ -94,38 +86,33 @@ export default function ChatSettings() {
 
   const handleJokeSubscriptionChange = (subscribed: boolean) => {
     if (!settings) return;
-    // важно: topic не затираем, чтобы можно было отписаться и подписаться обратно с тем же topic
     setSettings({ ...settings, jokeSubscribed: subscribed });
   };
 
   if (!chatIdNum) {
-    return (
-      <Alert severity="error">{t('chats.settings.invalidChatId')}</Alert>
-    );
+    return <Alert severity="error">{t("chats.settings.invalidChatId")}</Alert>;
   }
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+      <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
         <CircularProgress />
       </Box>
     );
   }
 
   if (!settings) {
-    return (
-      <Alert severity="error">{t('chats.settings.loadError')}</Alert>
-    );
+    return <Alert severity="error">{t("chats.settings.loadError")}</Alert>;
   }
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-        <Button onClick={() => navigate('/chats')} sx={{ mr: 2 }}>
-          ← {t('common.back')}
+      <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+        <Button onClick={() => navigate("/chats")} sx={{ mr: 2 }}>
+          ← {t("common.back")}
         </Button>
         <Typography variant="h4" component="h1">
-          {t('chats.settings.title', { chatId: chatIdNum })}
+          {t("chats.settings.title", { chatId: chatIdNum })}
         </Typography>
       </Box>
 
@@ -135,47 +122,47 @@ export default function ChatSettings() {
         </Alert>
       )}
 
-        {success && (
-          <Alert severity="success" sx={{ mb: 2 }}>
-            {t('chats.settings.saveSuccess')}
-          </Alert>
-        )}
+      {success && (
+        <Alert severity="success" sx={{ mb: 2 }}>
+          {t("chats.settings.saveSuccess")}
+        </Alert>
+      )}
 
       <Paper sx={{ p: 3, mb: 3 }}>
         <Typography variant="h6" gutterBottom>
-          {t('chats.settings.info.title')}
+          {t("chats.settings.info.title")}
         </Typography>
         <TextField
           fullWidth
-          label={t('chats.settings.info.chatId')}
+          label={t("chats.settings.info.chatId")}
           value={settings.chatId}
           margin="normal"
           InputProps={{ readOnly: true }}
-          helperText={t('chats.settings.info.chatIdHelper')}
+          helperText={t("chats.settings.info.chatIdHelper")}
         />
       </Paper>
 
       <Paper sx={{ p: 3, mb: 3 }}>
         <Typography variant="h6" gutterBottom>
-          {t('chats.settings.stupidity.title')}
+          {t("chats.settings.stupidity.title")}
         </Typography>
         <FormControlLabel
           control={
             <Switch
               checked={settings.stupidityCheck}
-              onChange={(e) => handleChange('stupidityCheck', e.target.checked)}
+              onChange={(e) => handleChange("stupidityCheck", e.target.checked)}
             />
           }
-          label={t('chats.settings.stupidity.enabled')}
+          label={t("chats.settings.stupidity.enabled")}
         />
         <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-          {t('chats.settings.stupidity.helper')}
+          {t("chats.settings.stupidity.helper")}
         </Typography>
       </Paper>
 
       <Paper sx={{ p: 3, mb: 3 }}>
         <Typography variant="h6" gutterBottom>
-          {t('chats.settings.jokes.title')}
+          {t("chats.settings.jokes.title")}
         </Typography>
         <FormControlLabel
           control={
@@ -184,30 +171,32 @@ export default function ChatSettings() {
               onChange={(e) => handleJokeSubscriptionChange(e.target.checked)}
             />
           }
-          label={t('chats.settings.jokes.subscribe')}
+          label={t("chats.settings.jokes.subscribe")}
         />
-        
+
         {settings.jokeSubscribed && (
           <>
             <Divider sx={{ my: 2 }} />
             <TextField
               fullWidth
-              label={t('chats.settings.jokes.topic')}
+              label={t("chats.settings.jokes.topic")}
               value={settings.jokeTopic}
-              onChange={(e) =>
-                handleChange('jokeTopic', e.target.value)
-              }
+              onChange={(e) => handleChange("jokeTopic", e.target.value)}
               margin="normal"
-              helperText={t('chats.settings.jokes.topicHelper')}
-              placeholder={t('chats.settings.jokes.topicPlaceholder')}
+              helperText={t("chats.settings.jokes.topicHelper")}
+              placeholder={t("chats.settings.jokes.topicPlaceholder")}
             />
           </>
         )}
       </Paper>
 
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-        <Button variant="outlined" onClick={() => navigate('/chats')} disabled={saving}>
-          {t('common.cancel')}
+      <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
+        <Button
+          variant="outlined"
+          onClick={() => navigate("/chats")}
+          disabled={saving}
+        >
+          {t("common.cancel")}
         </Button>
         <Button
           variant="contained"
@@ -215,10 +204,9 @@ export default function ChatSettings() {
           disabled={saving}
           startIcon={saving ? <CircularProgress size={20} /> : null}
         >
-          {saving ? t('common.saving') : t('common.save')}
+          {saving ? t("common.saving") : t("common.save")}
         </Button>
       </Box>
     </Box>
   );
 }
-
