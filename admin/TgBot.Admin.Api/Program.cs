@@ -1,11 +1,20 @@
 using FluentValidation;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using TgBot.Admin.Api.Api;
 using TgBot.Admin.Api.Health;
+using TgBot.Admin.Api.Options;
 using TgBot.Admin.Api.Settings.Chats;
 using TgBot.Admin.Api.Settings.Global;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services
+	.AddOptions<MongoOptions>()
+	.Bind(builder.Configuration.GetSection(MongoOptions.SectionName))
+	.ValidateOnStart();
+
+builder.Services.AddSingleton<IValidateOptions<MongoOptions>, MongoOptionsValidator>();
 
 builder.Services.AddCors(options =>
 {
@@ -18,13 +27,11 @@ builder.Services.AddCors(options =>
 	});
 });
 
-builder.Services.AddSingleton<IMongoClient>(_ =>
+builder.Services.AddSingleton<IMongoClient>(sp =>
 {
-	var conn = builder.Configuration.GetValue<string>("Mongo:ConnectionString")
-		?? builder.Configuration.GetValue<string>("Mongo__ConnectionString")
-		?? "mongodb://localhost:27017";
+	var mongoOptions = sp.GetRequiredService<IOptions<MongoOptions>>().Value;
 
-	var settings = MongoClientSettings.FromConnectionString(conn);
+	var settings = MongoClientSettings.FromConnectionString(mongoOptions.ConnectionString);
 	settings.ServerSelectionTimeout = TimeSpan.FromSeconds(2);
 	settings.ConnectTimeout = TimeSpan.FromSeconds(2);
 	settings.SocketTimeout = TimeSpan.FromSeconds(2);
@@ -34,11 +41,9 @@ builder.Services.AddSingleton<IMongoClient>(_ =>
 
 builder.Services.AddSingleton<IMongoDatabase>(sp =>
 {
-	var dbName = builder.Configuration.GetValue<string>("Mongo:Database")
-		?? builder.Configuration.GetValue<string>("Mongo__Database")
-	?? "tgbot";
+	var mongoOptions = sp.GetRequiredService<IOptions<MongoOptions>>().Value;
 
-	return sp.GetRequiredService<IMongoClient>().GetDatabase(dbName);
+	return sp.GetRequiredService<IMongoClient>().GetDatabase(mongoOptions.Database);
 });
 
 builder.Services.AddSingleton<GlobalSettingsRepository>();
