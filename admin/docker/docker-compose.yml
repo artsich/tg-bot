@@ -18,21 +18,25 @@ services:
     environment:
       - Mongo__ConnectionString=mongodb://mongo:27017
     ports:
-      - "8000:8080"
+      - "127.0.0.1:8000:8080"
 
   portal:
     build:
       context: ../TgBot.Admin.Portal
       dockerfile: Dockerfile
-      args:
-        - VITE_API_URL=http://localhost:8000/api
     restart: unless-stopped
     depends_on:
       - backend
     ports:
-      - "8001:80"
+      - "127.0.0.1:8001:80"
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    depends_on:
+      - portal
+      - backend
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARED_TOKEN}
 
 volumes:
   mongo_data:
-
-
