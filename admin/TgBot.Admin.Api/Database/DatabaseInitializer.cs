@@ -7,7 +7,7 @@ public static class DatabaseInitializer
 {
 	public static async Task InitializeAsync(AdminDbContext db)
 	{
-		await db.Database.EnsureCreatedAsync();
+		await db.Database.MigrateAsync();
 
 		var hasGlobalSettings = await db.GlobalSettings
 			.AnyAsync(x => x.Id == GlobalSettingsRepository.GlobalId);
