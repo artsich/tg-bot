@@ -1,6 +1,7 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using TgBot.Admin.Api.Api.Validation;
 using TgBot.Admin.Api.Database;
 using TgBot.Admin.Api.Health;
 using TgBot.Admin.Api.Options;
