@@ -5,4 +5,5 @@ export const API_ENDPOINTS = {
   globalSettings: "/settings/global",
   chats: "/chats",
   chatSettings: (chatId: number) => `/chats/${chatId}/settings`,
+  health: "/health",
 } as const;

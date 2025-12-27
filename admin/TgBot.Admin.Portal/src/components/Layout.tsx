@@ -23,6 +23,7 @@ import { useTheme } from "@mui/material/styles";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ChatIcon from "@mui/icons-material/Chat";
 import MenuIcon from "@mui/icons-material/Menu";
+import ApiHealthChip from "./ApiHealthChip";
 
 const drawerWidth = 240;
 
@@ -103,6 +104,7 @@ export default function Layout({ children }: LayoutProps) {
             >
               TgBot Admin
             </Typography>
+            <ApiHealthChip />
           </Box>
           <FormControl size="small" sx={{ minWidth: 132 }}>
             <Select

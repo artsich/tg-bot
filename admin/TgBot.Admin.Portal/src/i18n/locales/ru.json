@@ -16,6 +16,17 @@
     "globalSettings": "Глобальные настройки",
     "chatSettings": "Настройки чатов"
   },
+  "health": {
+    "api": {
+      "healthy": "API: healthy",
+      "unhealthy": "API: unhealthy",
+      "unknown": "API: checking",
+      "check": "Проверить API",
+      "checking": "Проверка...",
+      "neverChecked": "Пока не проверялось",
+      "lastCheckedAt": "Последняя проверка: {{time}}"
+    }
+  },
   "globalSettings": {
     "title": "Глобальные настройки",
     "llm": {

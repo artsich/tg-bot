@@ -16,6 +16,17 @@
     "globalSettings": "Global Settings",
     "chatSettings": "Chat Settings"
   },
+  "health": {
+    "api": {
+      "healthy": "API: healthy",
+      "unhealthy": "API: unhealthy",
+      "unknown": "API: checking",
+      "check": "Check API",
+      "checking": "Checking...",
+      "neverChecked": "Not checked yet",
+      "lastCheckedAt": "Last checked: {{time}}"
+    }
+  },
   "globalSettings": {
     "title": "Global Settings",
     "llm": {

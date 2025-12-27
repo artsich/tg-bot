@@ -2,6 +2,16 @@ import { API_URL, API_ENDPOINTS } from "../config/api";
 import type { GlobalSettings, ChatSettings } from "../types";
 
 export const api = {
+  async checkHealth(signal?: AbortSignal): Promise<boolean> {
+    const response = await fetch(`${API_URL}${API_ENDPOINTS.health}`, {
+      method: "GET",
+      cache: "no-store",
+      signal,
+    });
+
+    return response.ok;
+  },
+
   async getGlobalSettings(): Promise<GlobalSettings> {
     const response = await fetch(`${API_URL}${API_ENDPOINTS.globalSettings}`);
     if (!response.ok) {
