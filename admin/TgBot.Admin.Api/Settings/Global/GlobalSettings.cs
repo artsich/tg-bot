@@ -1,14 +1,8 @@
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-
 namespace TgBot.Admin.Api.Settings.Global;
 
-[BsonIgnoreExtraElements]
-public sealed class GlobalSettingsDocument
+public sealed class GlobalSettings
 {
-	[BsonId]
-	[BsonRepresentation(BsonType.String)]
-	public string Id { get; set; } = "global";
+	public string Id { get; set; } = GlobalSettingsRepository.GlobalId;
 
 	public string? LlmModel { get; set; }
 
@@ -24,5 +18,4 @@ public sealed class GlobalSettingsDocument
 
 	public string? JokeInstructions { get; set; }
 }
-
 

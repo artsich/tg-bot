@@ -1,6 +1,7 @@
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using MongoDB.Driver;
+using TgBot.Admin.Api.Database;
 using TgBot.Admin.Api.Health;
 using TgBot.Admin.Api.Options;
 using TgBot.Admin.Api.Settings.Chats;
@@ -25,28 +26,16 @@ public static class ServiceCollectionExtensions
 	private static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
 	{
 		services
-			.AddOptions<MongoOptions>()
-			.Bind(configuration.GetSection(MongoOptions.SectionName))
+			.AddOptions<PostgresOptions>()
+			.Bind(configuration.GetSection(PostgresOptions.SectionName))
 			.ValidateOnStart();
 
-		services.AddSingleton<IValidateOptions<MongoOptions>, MongoOptionsValidator>();
+		services.AddSingleton<IValidateOptions<PostgresOptions>, PostgresOptionsValidator>();
 
-		services.AddSingleton<IMongoClient>(sp =>
+		services.AddDbContext<AdminDbContext>((sp, options) =>
 		{
-			var mongoOptions = sp.GetRequiredService<IOptions<MongoOptions>>().Value;
-
-			var settings = MongoClientSettings.FromConnectionString(mongoOptions.ConnectionString);
-			settings.ServerSelectionTimeout = TimeSpan.FromSeconds(2);
-			settings.ConnectTimeout = TimeSpan.FromSeconds(2);
-			settings.SocketTimeout = TimeSpan.FromSeconds(2);
-
-			return new MongoClient(settings);
-		});
-
-		services.AddSingleton<IMongoDatabase>(sp =>
-		{
-			var mongoOptions = sp.GetRequiredService<IOptions<MongoOptions>>().Value;
-			return sp.GetRequiredService<IMongoClient>().GetDatabase(mongoOptions.Database);
+			var postgresOptions = sp.GetRequiredService<IOptions<PostgresOptions>>().Value;
+			options.UseNpgsql(postgresOptions.ConnectionString);
 		});
 
 		return services;
@@ -70,8 +59,8 @@ public static class ServiceCollectionExtensions
 
 	private static IServiceCollection AddAdminApiSettings(this IServiceCollection services)
 	{
-		services.AddSingleton<GlobalSettingsRepository>();
-		services.AddSingleton<ChatSettingsRepository>();
+		services.AddScoped<GlobalSettingsRepository>();
+		services.AddScoped<ChatSettingsRepository>();
 
 		return services;
 	}
@@ -86,7 +75,7 @@ public static class ServiceCollectionExtensions
 	{
 		services
 			.AddHealthChecks()
-			.AddCheck<MongoPingHealthCheck>("mongo");
+			.AddCheck<PostgresPingHealthCheck>("postgres");
 
 		return services;
 	}

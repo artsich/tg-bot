@@ -1,13 +1,7 @@
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-
 namespace TgBot.Admin.Api.Settings.Chats;
 
-[BsonIgnoreExtraElements]
-public sealed class ChatSettingsDocument
+public sealed class ChatSettings
 {
-	[BsonId]
-	[BsonRepresentation(BsonType.Int64)]
 	public long ChatId { get; set; }
 
 	public bool StupidityCheck { get; set; }
@@ -16,5 +10,4 @@ public sealed class ChatSettingsDocument
 
 	public string JokeTopic { get; set; } = string.Empty;
 }
-
 

@@ -1,39 +1,40 @@
-using MongoDB.Driver;
+using Microsoft.EntityFrameworkCore;
+using TgBot.Admin.Api.Database;
 
 namespace TgBot.Admin.Api.Settings.Chats;
 
-public sealed class ChatSettingsRepository(IMongoDatabase db)
+public sealed class ChatSettingsRepository(AdminDbContext db)
 {
-	private const string CollectionName = "chat_settings";
-
-	private readonly IMongoCollection<ChatSettingsDocument> _collection = db.GetCollection<ChatSettingsDocument>(CollectionName);
-
-	public async Task<IReadOnlyList<ChatSettingsDocument>> GetAll()
+	public async Task<IReadOnlyList<ChatSettings>> GetAll()
 	{
-		var docs = await _collection
-			.Find(_ => true)
-			.SortBy(x => x.ChatId)
+		return await db.ChatSettings
+			.OrderBy(x => x.ChatId)
 			.ToListAsync();
-
-		return docs;
 	}
 
-	public async Task<ChatSettingsDocument?> Get(long chatId)
+	public async Task<ChatSettings?> Get(long chatId)
 	{
-		var doc = await _collection
-			.Find(x => x.ChatId == chatId)
-			.FirstOrDefaultAsync();
-
-		return doc;
+		return await db.ChatSettings
+			.FirstOrDefaultAsync(x => x.ChatId == chatId);
 	}
 
-	public async Task<ChatSettingsDocument> Upsert(ChatSettingsDocument doc)
+	public async Task<ChatSettings> Upsert(ChatSettings doc)
 	{
-		await _collection.ReplaceOneAsync(
-			x => x.ChatId == doc.ChatId,
-			doc,
-			new ReplaceOptions { IsUpsert = true }
-		);
+		var existing = await db.ChatSettings
+			.FirstOrDefaultAsync(x => x.ChatId == doc.ChatId);
+
+		if (existing == null)
+		{
+			db.ChatSettings.Add(doc);
+		}
+		else
+		{
+			existing.StupidityCheck = doc.StupidityCheck;
+			existing.JokeSubscribed = doc.JokeSubscribed;
+			existing.JokeTopic = doc.JokeTopic;
+		}
+
+		await db.SaveChangesAsync();
 
 		return doc;
 	}
