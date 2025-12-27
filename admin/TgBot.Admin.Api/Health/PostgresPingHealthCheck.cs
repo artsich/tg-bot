@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using TgBot.Admin.Api.Database;
+using TgBot.Admin.Data;
 
 namespace TgBot.Admin.Api.Health;
 

@@ -1,9 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using TgBot.Admin.Api.Database.Configurations;
-using TgBot.Admin.Api.Settings.Chats;
-using TgBot.Admin.Api.Settings.Global;
+using TgBot.Admin.Data.Settings.Chats;
+using TgBot.Admin.Data.Settings.Global;
 
-namespace TgBot.Admin.Api.Database;
+namespace TgBot.Admin.Data;
 
 public sealed class AdminDbContext(DbContextOptions<AdminDbContext> options) : DbContext(options)
 {

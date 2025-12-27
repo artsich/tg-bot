@@ -1,6 +1,6 @@
 using TgBot.Admin.Api.Api.Contracts;
 using TgBot.Admin.Api.Api.Validation;
-using TgBot.Admin.Api.Settings.Global;
+using TgBot.Admin.Data.Settings.Global;
 
 namespace TgBot.Admin.Api.Api;
 
@@ -25,7 +25,7 @@ public static class GlobalSettingsApi
 		return api;
 	}
 
-	private static Contracts.GlobalSettings ToContract(Settings.Global.GlobalSettings doc) =>
+	private static Contracts.GlobalSettings ToContract(Data.Settings.Global.GlobalSettings doc) =>
 		new(
 			doc.LlmModel!,
 			doc.HistoryMaxLen!.Value,
@@ -36,7 +36,7 @@ public static class GlobalSettingsApi
 			doc.JokeInstructions!
 		);
 
-	private static void ApplyPatch(Settings.Global.GlobalSettings current, GlobalSettingsPatch patch)
+	private static void ApplyPatch(Data.Settings.Global.GlobalSettings current, GlobalSettingsPatch patch)
 	{
 		if (patch.LlmModel is not null)
 			current.LlmModel = patch.LlmModel;

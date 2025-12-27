@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TgBot.Admin.Api.Settings.Chats;
+using TgBot.Admin.Data.Settings.Chats;
 
-namespace TgBot.Admin.Api.Database.Configurations;
+namespace TgBot.Admin.Data.Configurations;
 
 public sealed class ChatSettingsConfiguration : IEntityTypeConfiguration<ChatSettings>
 {

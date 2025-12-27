@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace TgBot.Admin.Api.Database.Migrations
+namespace TgBot.Admin.Data.Database.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -54,3 +54,4 @@ namespace TgBot.Admin.Api.Database.Migrations
         }
     }
 }
+

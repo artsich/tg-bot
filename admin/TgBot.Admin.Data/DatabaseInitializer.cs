@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using TgBot.Admin.Api.Settings.Global;
+using TgBot.Admin.Data.Settings.Global;
 
-namespace TgBot.Admin.Api.Database;
+namespace TgBot.Admin.Data;
 
 public static class DatabaseInitializer
 {

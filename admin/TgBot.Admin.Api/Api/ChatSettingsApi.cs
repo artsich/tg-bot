@@ -1,6 +1,6 @@
 using TgBot.Admin.Api.Api.Contracts;
 using TgBot.Admin.Api.Api.Validation;
-using TgBot.Admin.Api.Settings.Chats;
+using TgBot.Admin.Data.Settings.Chats;
 
 namespace TgBot.Admin.Api.Api;
 
@@ -26,7 +26,7 @@ public static class ChatSettingsApi
 
 		api.MapPut("/chats/{chatId:long}/settings", async (long chatId, ChatSettingsPut put, ChatSettingsRepository repo) =>
 		{
-			var current = await repo.Get(chatId) ?? new Settings.Chats.ChatSettings { ChatId = chatId };
+			var current = await repo.Get(chatId) ?? new Data.Settings.Chats.ChatSettings { ChatId = chatId };
 			ApplyPut(current, put);
 			var saved = await repo.Upsert(current);
 			return Results.Ok(ToChat(saved));
@@ -35,7 +35,7 @@ public static class ChatSettingsApi
 		return api;
 	}
 
-	private static Contracts.ChatSettings ToChat(Settings.Chats.ChatSettings doc) =>
+	private static Contracts.ChatSettings ToChat(Data.Settings.Chats.ChatSettings doc) =>
 		new(
 			doc.ChatId,
 			doc.StupidityCheck,
@@ -43,7 +43,7 @@ public static class ChatSettingsApi
 			doc.JokeTopic
 		);
 
-	private static void ApplyPut(Settings.Chats.ChatSettings current, ChatSettingsPut put)
+	private static void ApplyPut(Data.Settings.Chats.ChatSettings current, ChatSettingsPut put)
 	{
 		current.StupidityCheck = put.StupidityCheck ?? current.StupidityCheck;
 		current.JokeSubscribed = put.JokeSubscribed ?? current.JokeSubscribed;

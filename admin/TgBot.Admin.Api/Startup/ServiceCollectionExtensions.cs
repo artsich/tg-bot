@@ -2,11 +2,11 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using TgBot.Admin.Api.Api.Validation;
-using TgBot.Admin.Api.Database;
 using TgBot.Admin.Api.Health;
 using TgBot.Admin.Api.Options;
-using TgBot.Admin.Api.Settings.Chats;
-using TgBot.Admin.Api.Settings.Global;
+using TgBot.Admin.Data;
+using TgBot.Admin.Data.Settings.Chats;
+using TgBot.Admin.Data.Settings.Global;
 
 namespace TgBot.Admin.Api.Startup;
 

@@ -20,8 +20,8 @@ services:
 
   backend:
     build:
-      context: ../TgBot.Admin.Api
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: TgBot.Admin.Api/Dockerfile
       target: final
     restart: unless-stopped
     depends_on:

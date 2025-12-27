@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31903.59
+# Visual Studio Version 18
+VisualStudioVersion = 18.1.11312.151 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgBot.Admin.Api", "TgBot.Admin.Api\TgBot.Admin.Api.csproj", "{7028F7AF-616A-43C1-BD77-C2717B28BACD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgBot.Admin.Data", "TgBot.Admin.Data\TgBot.Admin.Data.csproj", "{5A82064B-C4F2-77B9-B924-7B371705B15E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,18 @@ Global
 		{7028F7AF-616A-43C1-BD77-C2717B28BACD}.Release|x64.Build.0 = Release|Any CPU
 		{7028F7AF-616A-43C1-BD77-C2717B28BACD}.Release|x86.ActiveCfg = Release|Any CPU
 		{7028F7AF-616A-43C1-BD77-C2717B28BACD}.Release|x86.Build.0 = Release|Any CPU
+		{5A82064B-C4F2-77B9-B924-7B371705B15E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A82064B-C4F2-77B9-B924-7B371705B15E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A82064B-C4F2-77B9-B924-7B371705B15E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5A82064B-C4F2-77B9-B924-7B371705B15E}.Debug|x64.Build.0 = Debug|Any CPU
+		{5A82064B-C4F2-77B9-B924-7B371705B15E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5A82064B-C4F2-77B9-B924-7B371705B15E}.Debug|x86.Build.0 = Debug|Any CPU
+		{5A82064B-C4F2-77B9-B924-7B371705B15E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A82064B-C4F2-77B9-B924-7B371705B15E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A82064B-C4F2-77B9-B924-7B371705B15E}.Release|x64.ActiveCfg = Release|Any CPU
+		{5A82064B-C4F2-77B9-B924-7B371705B15E}.Release|x64.Build.0 = Release|Any CPU
+		{5A82064B-C4F2-77B9-B924-7B371705B15E}.Release|x86.ActiveCfg = Release|Any CPU
+		{5A82064B-C4F2-77B9-B924-7B371705B15E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

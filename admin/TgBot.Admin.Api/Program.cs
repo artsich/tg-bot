@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TgBot.Admin.Api.Api;
-using TgBot.Admin.Api.Database;
 using TgBot.Admin.Api.Startup;
+using TgBot.Admin.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

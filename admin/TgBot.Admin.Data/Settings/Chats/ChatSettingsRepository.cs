@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using TgBot.Admin.Api.Database;
 
-namespace TgBot.Admin.Api.Settings.Chats;
+namespace TgBot.Admin.Data.Settings.Chats;
 
 public sealed class ChatSettingsRepository(AdminDbContext db)
 {
@@ -39,5 +38,4 @@ public sealed class ChatSettingsRepository(AdminDbContext db)
 		return doc;
 	}
 }
-
 

@@ -1,4 +1,4 @@
-namespace TgBot.Admin.Api.Settings.Global;
+namespace TgBot.Admin.Data.Settings.Global;
 
 public sealed class GlobalSettings
 {

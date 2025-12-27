@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TgBot.Admin.Api.Settings.Global;
+using TgBot.Admin.Data.Settings.Global;
 
-namespace TgBot.Admin.Api.Database.Configurations;
+namespace TgBot.Admin.Data.Configurations;
 
 public sealed class GlobalSettingsConfiguration : IEntityTypeConfiguration<GlobalSettings>
 {

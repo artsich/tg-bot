@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using TgBot.Admin.Api.Database;
 
-namespace TgBot.Admin.Api.Settings.Global;
+namespace TgBot.Admin.Data.Settings.Global;
 
 public sealed class GlobalSettingsRepository(AdminDbContext db)
 {
@@ -40,3 +39,4 @@ public sealed class GlobalSettingsRepository(AdminDbContext db)
 		return doc;
 	}
 }
+

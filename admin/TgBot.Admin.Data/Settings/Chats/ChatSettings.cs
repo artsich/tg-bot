@@ -1,4 +1,4 @@
-namespace TgBot.Admin.Api.Settings.Chats;
+namespace TgBot.Admin.Data.Settings.Chats;
 
 public sealed class ChatSettings
 {
