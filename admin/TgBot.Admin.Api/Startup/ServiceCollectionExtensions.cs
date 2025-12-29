@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using TgBot.Admin.Api.Api.Validation;
 using TgBot.Admin.Api.Health;
 using TgBot.Admin.Api.Options;
+using TgBot.Admin.Api.Services;
 using TgBot.Admin.Data;
 using TgBot.Admin.Data.Settings.Chats;
 using TgBot.Admin.Data.Settings.Global;
@@ -20,6 +21,7 @@ public static class ServiceCollectionExtensions
 		services.AddAdminApiValidation();
 		services.AddAdminApiHealthChecks();
 		services.AddAdminApiSwagger();
+		services.AddTelegramBot(configuration);
 
 		return services;
 	}
@@ -85,6 +87,20 @@ public static class ServiceCollectionExtensions
 	{
 		services.AddEndpointsApiExplorer();
 		services.AddSwaggerGen();
+		return services;
+	}
+
+	private static IServiceCollection AddTelegramBot(this IServiceCollection services, IConfiguration configuration)
+	{
+		services
+			.AddOptions<TelegramBotOptions>()
+			.Bind(configuration.GetSection(TelegramBotOptions.SectionName))
+			.ValidateOnStart();
+
+		services.AddSingleton<IValidateOptions<TelegramBotOptions>, TelegramBotOptionsValidator>();
+
+		services.AddHostedService<TelegramBotBackgroundService>();
+
 		return services;
 	}
 }
